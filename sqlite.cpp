@@ -19,8 +19,6 @@ Sqlite::~Sqlite()
 bool Sqlite::checkpassword(char *username, char *password)
 {
     QSqlQuery query;
-    //query.prepare(checkpasswordsql);
-    //query.bindValue(":user",username);
     QString u=username;
     QString sqltext="select password,salt from users where username='"+u+"'";
     query.exec(sqltext);

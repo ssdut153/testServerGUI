@@ -17,15 +17,19 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     sqlite.cpp \
-    cJSON.c \
     helper.cpp \
-    md5/md5.cpp
+    md5/md5.cpp \
+    common/cJSON.c \
+    common/message.cpp \
+    common/user.cpp
 
 HEADERS  += mainwindow.h \
     sqlite.h \
-    cJSON.h \
     helper.h \
-    md5/md5.h
+    md5/md5.h \
+    common/cJSON.h \
+    common/message.h \
+    common/user.h
 
 FORMS    += mainwindow.ui
 #LIBS += "F:/QtCreate/testServerGUI/MySqlDLL.lib"
