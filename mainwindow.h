@@ -3,7 +3,7 @@
 
 #include <QMainWindow>
 #include <QtWidgets/QTextEdit>
-
+#include "myclient.h"
 
 namespace Ui {
 class MainWindow;
@@ -19,6 +19,7 @@ public:
 
 private:
     Ui::MainWindow *ui;
+    QString login(std::string textJson,MyClient* socket,int ind);
 
 
 private slots:

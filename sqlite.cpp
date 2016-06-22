@@ -43,9 +43,12 @@ bool Sqlite::reguser(const char* username,const char* password,char* vip)//salt,
     QString p=Helper::hash(tohash);
     QString s=salt;
     QString v=vip;
-    QString sqltext="insert into users (username,password,salt,regdate,vip) values('"+u+"','"+p+"','"+s+"','"+"2000-1-1 00:00"+"',"+v+")";
-    if(query.exec(sqltext))
-        return true;
-    else
+    QString d=Helper::getDateTime();
+    QString sqltext="insert into users (username,password,salt,regdate,vip) values('"+u+"','"+p+"','"+s+"','"+d+"',"+v+")";
+    if(!query.exec(sqltext))
         return false;
+    QString sqltext2="create table "+u+" (uid integer PRIMARY KEY autoincrement,username varchar(10),status int)";
+    if(!query.exec(sqltext2))
+        return false;
+    return true;
 }

@@ -12,6 +12,7 @@ public:
     static char* getsalt(int length=8);
     static int lenofchararrau(const char* text);
     static std::string getHeadfromJson(std::string textJson);
+    static QString getDateTime();
 };
 
 #endif // HELPER_H

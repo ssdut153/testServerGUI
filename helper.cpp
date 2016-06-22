@@ -2,6 +2,7 @@
 #include "md5/md5.h"
 #include <time.h>
 #include "common/cJSON.h"
+#include <QTextStream>
 unsigned long seed=(unsigned long)time(0);
 const char* Helper::hash(const char* text)
 {
@@ -14,6 +15,16 @@ const char* Helper::tochararray(QString qstr)
 {
     std::string str = qstr.toStdString();
     return str.c_str();
+}
+QString Helper::getDateTime()
+{
+    QString temp;
+    struct tm *local;
+    time_t t;
+    t=time(NULL);
+    local=localtime(&t);
+    QTextStream(&temp)<<local->tm_year+1900<<"-"<<local->tm_mon+1<<"-"<<local->tm_mday<<" "<<local->tm_hour<<":"<<local->tm_min<<":"<<local->tm_sec;
+    return temp;
 }
 
 int Helper::lenofchararrau(const char *text)
@@ -34,20 +45,27 @@ char* Helper::getsalt(int length)
 
 std::string Helper::getHeadfromJson(std::string textJson)
 {
+    if (textJson.find("\"head\":\"") >= textJson.length())
+        return "false";
     cJSON *json , *json_head;
     // 解析数据包
     const char* text = textJson.c_str();
-    json = cJSON_Parse(text);
-    if (!json)
-        return "false";
-    else
+    try
     {
-        // 解析head
-        json_head = cJSON_GetObjectItem( json , "head");
-        std::string head=json_head->valuestring;
-        cJSON_Delete(json);
-        return head;
+        json = cJSON_Parse(text);
+        if (!json)
+            return "false";
+        else
+        {
+            // 解析head
+            json_head = cJSON_GetObjectItem( json , "head");
+            std::string head=json_head->valuestring;
+            cJSON_Delete(json);
+            return head;
+        }
     }
+    catch(...)
+    {return "false";}
 }
 
 int Helper::randint(int lower,int higher)
@@ -64,44 +82,44 @@ char Helper::randchar(int rule)//0-大小写字母、数字、特殊字符；1-�
     {
     case 0:return randint(33,126);
     case 1:
+    {
+        while(1)
         {
-            while(1)
-            {
-                j=randint(48,90);
-                if(('A'<=j && j<='Z') || ('0'<=j && j<='9'))
-                    return j;
-            }
+            j=randint(48,90);
+            if(('A'<=j && j<='Z') || ('0'<=j && j<='9'))
+                return j;
         }
+    }
     case 2:
+    {
+        while(1)
         {
-            while(1)
-            {
-                j=randint(48,122);
-                if(('a'<=j && j<='z') || ('0'<=j && j<='9'))
-                    return j;
-            }
+            j=randint(48,122);
+            if(('a'<=j && j<='z') || ('0'<=j && j<='9'))
+                return j;
         }
+    }
     case 3:
+    {
+        while(1)
         {
-            while(1)
-            {
-                j=randint(65,122);
-                if(('a'<=j && j<='z') || ('A'<=j && j<='Z'))
-                    return j;
-            }
+            j=randint(65,122);
+            if(('a'<=j && j<='z') || ('A'<=j && j<='Z'))
+                return j;
         }
+    }
     case 4:return randint(65,90);
     case 5:return randint(97,122);
     case 6:return randint(48,57);
     case 7:
+    {
+        while(1)
         {
-            while(1)
-            {
-                j=randint(48,122);
-                if(('a'<=j && j<='z') || ('A'<=j && j<='Z') || ('0'<=j && j<='9'))
-                    return j;
-            }
+            j=randint(48,122);
+            if(('a'<=j && j<='z') || ('A'<=j && j<='Z') || ('0'<=j && j<='9'))
+                return j;
         }
+    }
     default:return -1;
     }
 }

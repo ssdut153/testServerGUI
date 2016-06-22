@@ -6,7 +6,6 @@
 #include <QtSql>
 #include "sqlite.h"
 #include "helper.h"
-#include "myclient.h"
 #include <vector>
 #include "common/allmessage.h"
 QTcpSocket *client;
@@ -18,14 +17,13 @@ int clientSize=0;
 void MainWindow::acceptConnection()
 {
     QString tem;
-    QTextStream(&tem)<<"test"<<clientSize;
-    ui->textEdit->append(tem);
+    QTextStream(&tem)<<"temp"<<clientSize;
+    //ui->textEdit->append(tem);
     clients.push_back(MyClient(tem.toStdString(),server->nextPendingConnection(),clientSize++));
-
     //clientConnection = clients[clientSize-1].client;
 
     QString conne;
-    QTextStream(&conne)<<"New connection:"<<clients[clientSize-1].client->peerName()<<"\t"<<clients[clientSize-1].client->peerAddress().toString()<<"\t"<<clients[clientSize-1].client->peerPort();
+    QTextStream(&conne)<<"New connection:"<<clients[clientSize-1].client->peerName()<<"\t"<<clients[clientSize-1].client->peerAddress().toString()<<"\t"<<clients[clientSize-1].client->peerPort()<<" @"<<Helper::getDateTime();
     ui->textEdit->append(conne);
 
     connect(clients[clientSize-1].client, SIGNAL(readyRead()), signalMapper, SLOT(map()));
@@ -34,26 +32,43 @@ void MainWindow::acceptConnection()
 
     //connect(clients[clientSize-1].client, SIGNAL(readyRead()), this, SLOT(readClient(QTcpSocket*)));
 }
-void login(std::string textJson,QTcpSocket* socket)
+QString MainWindow::login(std::string textJson,MyClient* socket,int ind)
 {
     loginMessage loginmessage;
+    QString res;
     loginmessage.loadfromJson(textJson);
+
     if(sqlite->checkpassword(loginmessage.user.c_str(),loginmessage.pass.c_str()))
     {
         loginFeedBackMessage feedback(loginmessage.user,"true");
-        socket->write(feedback.getJsonString().c_str());
+        socket->username=loginmessage.user;
+        socket->client->write(feedback.getJsonString().c_str());
+        QTextStream(&res)<<loginmessage.user.c_str()<<" log in success @"<<Helper::getDateTime()<<" &scoketName:"<<QString::fromStdString(clients[ind].username);
+        /*
+        for (int i=0;i<clientSize;i++)
+        {
+            if(clients[i].index!=ind&&clients[i].username==loginmessage.user)
+            {
+                clients[i].client->write("{\"head\":\"forceLogOut\"}");
+                break;
+            }
+        }
+        */
     }
     else
     {
         loginFeedBackMessage feedback(loginmessage.user,"false");
-        socket->write(feedback.getJsonString().c_str());
+        socket->client->write(feedback.getJsonString().c_str());
+        QTextStream(&res)<<loginmessage.user.c_str()<<" log in fail @"<<Helper::getDateTime();
     }
+    return res;
 }
 
 void MainWindow::readClient(int ind)
 {
     QTcpSocket* tempSocket;
-    for (int i=0;i<clientSize;i++)
+    int i=0;
+    for (;i<clientSize;i++)
     {
         if(clients[i].index==ind)
         {
@@ -68,12 +83,14 @@ void MainWindow::readClient(int ind)
 
     if(!str.isEmpty())
     {
-        ui->textEdit->append(str);
+        QString log;
+        QTextStream(&log)<<str<<" @"<<Helper::getDateTime();
+        ui->textEdit->append(log);
+
+        //std::string head="login";
         std::string head=Helper::getHeadfromJson(str.toStdString());
         if(head=="login")
-            login(str.toStdString(),tempSocket);
-        else if(head=="false")
-            return;
+            ui->textEdit->append(login(str.toStdString(),&clients[i],i));
         else
         {
             tempSocket->write("I received your message:");
@@ -85,7 +102,7 @@ void MainWindow::readClient(int ind)
 
     //clientConnection->close();
 }
-
+//{"head":"login","username":"testuser88","password":"testuser"}
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -111,11 +128,13 @@ MainWindow::MainWindow(QWidget *parent) :
     loginFeedBackMessage test("testuser","true");
     std::string tempjson=test.getJsonString();
     ui->textEdit->append(QString::fromStdString(tempjson));
+
     loginFeedBackMessage testload;
     testload.loadfromJson(tempjson);
     ui->textEdit->append(QString::fromStdString(testload.user));
     ui->textEdit->append(QString::fromStdString(testload.stat));
     */
+    ui->textEdit->append(Helper::getDateTime());
 }
 
 MainWindow::~MainWindow()
