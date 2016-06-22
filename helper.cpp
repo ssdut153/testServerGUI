@@ -1,6 +1,7 @@
 #include "helper.h"
 #include "md5/md5.h"
 #include <time.h>
+#include "common/cJSON.h"
 unsigned long seed=(unsigned long)time(0);
 const char* Helper::hash(const char* text)
 {
@@ -15,7 +16,7 @@ const char* Helper::tochararray(QString qstr)
     return str.c_str();
 }
 
-int Helper::lenofchararrau(char *text)
+int Helper::lenofchararrau(const char *text)
 {
     int length=0;
     while(text[++length]);
@@ -29,6 +30,24 @@ char* Helper::getsalt(int length)
         temp[i]=randchar(7);
     temp[length]=0;
     return temp;
+}
+
+std::string Helper::getHeadfromJson(std::string textJson)
+{
+    cJSON *json , *json_head;
+    // 解析数据包
+    const char* text = textJson.c_str();
+    json = cJSON_Parse(text);
+    if (!json)
+        return "false";
+    else
+    {
+        // 解析head
+        json_head = cJSON_GetObjectItem( json , "head");
+        std::string head=json_head->valuestring;
+        cJSON_Delete(json);
+        return head;
+    }
 }
 
 int Helper::randint(int lower,int higher)

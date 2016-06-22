@@ -16,7 +16,7 @@ Sqlite::~Sqlite()
     dbconn.close();
 }
 
-bool Sqlite::checkpassword(char *username, char *password)
+bool Sqlite::checkpassword(const char *username,const char *password)
 {
     QSqlQuery query;
     QString u=username;
@@ -32,7 +32,7 @@ bool Sqlite::checkpassword(char *username, char *password)
         return false;
 }
 
-bool Sqlite::reguser(char* username,char* password,char* vip)//salt,regdate,sha-256
+bool Sqlite::reguser(const char* username,const char* password,char* vip)//salt,regdate,sha-256
 {
     QSqlQuery query;
     char* salt=Helper::getsalt();

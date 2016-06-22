@@ -8,6 +8,7 @@
 #include "helper.h"
 #include "myclient.h"
 #include <vector>
+#include "common/allmessage.h"
 QTcpSocket *client;
 QTcpServer *server;
 std::vector<MyClient> clients;
@@ -33,6 +34,21 @@ void MainWindow::acceptConnection()
 
     //connect(clients[clientSize-1].client, SIGNAL(readyRead()), this, SLOT(readClient(QTcpSocket*)));
 }
+void login(std::string textJson,QTcpSocket* socket)
+{
+    loginMessage loginmessage;
+    loginmessage.loadfromJson(textJson);
+    if(sqlite->checkpassword(loginmessage.user.c_str(),loginmessage.pass.c_str()))
+    {
+        loginFeedBackMessage feedback(loginmessage.user,"true");
+        socket->write(feedback.getJsonString().c_str());
+    }
+    else
+    {
+        loginFeedBackMessage feedback(loginmessage.user,"false");
+        socket->write(feedback.getJsonString().c_str());
+    }
+}
 
 void MainWindow::readClient(int ind)
 {
@@ -53,9 +69,20 @@ void MainWindow::readClient(int ind)
     if(!str.isEmpty())
     {
         ui->textEdit->append(str);
-        tempSocket->write("I received your message:");
-        tempSocket->write(str.toStdString().c_str());
+        std::string head=Helper::getHeadfromJson(str.toStdString());
+        if(head=="login")
+            login(str.toStdString(),tempSocket);
+        else if(head=="false")
+            return;
+        else
+        {
+            tempSocket->write("I received your message:");
+            tempSocket->write(str.toStdString().c_str());
+        }
     }
+
+
+
     //clientConnection->close();
 }
 
@@ -71,9 +98,24 @@ MainWindow::MainWindow(QWidget *parent) :
     signalMapper = new QSignalMapper(this);
     //  初始化Sqlite类
     sqlite=new Sqlite();
-    QSqlQuery query;//以下执行相关QSL语句
-
-
+    /*
+    loginMessage test("testuser","testpassword");
+    std::string tempjson=test.getJsonString();
+    ui->textEdit->append(QString::fromStdString(tempjson));
+    loginMessage testload;
+    testload.loadfromJson(tempjson);
+    ui->textEdit->append(QString::fromStdString(testload.user));
+    ui->textEdit->append(QString::fromStdString(testload.pass));
+   */
+    /*
+    loginFeedBackMessage test("testuser","true");
+    std::string tempjson=test.getJsonString();
+    ui->textEdit->append(QString::fromStdString(tempjson));
+    loginFeedBackMessage testload;
+    testload.loadfromJson(tempjson);
+    ui->textEdit->append(QString::fromStdString(testload.user));
+    ui->textEdit->append(QString::fromStdString(testload.stat));
+    */
 }
 
 MainWindow::~MainWindow()
@@ -124,12 +166,10 @@ void MainWindow::on_pushButton_2_clicked()
 
 void MainWindow::on_pushButton_3_clicked()
 {
-    //char temp[3];
-    //itoa(Helper::lenofchararrau("123"),temp,10);
-    //ui->textEdit->append(temp);
-    //sqlite->reguser("testuser3","testuser","0");
-    ui->textEdit->append(sqlite->checkpassword("testuser3","testuser")?"check true":"check false");
-    ui->textEdit->append(sqlite->checkpassword("testuser4","testuser3")?"check true":"check false");
+
+    sqlite->reguser(ui->textEdit_3->toPlainText().toStdString().c_str(),ui->textEdit_2->toPlainText().toStdString().c_str(),"0");
+    ui->textEdit_2->setPlainText("");
+    ui->textEdit_3->setPlainText("");
 }
 
 void MainWindow::on_pushButton_4_clicked()

@@ -10,7 +10,8 @@ public:
     static char randchar(int rule);
     static int randint(int lower,int higher);
     static char* getsalt(int length=8);
-    static int lenofchararrau(char* text);
+    static int lenofchararrau(const char* text);
+    static std::string getHeadfromJson(std::string textJson);
 };
 
 #endif // HELPER_H

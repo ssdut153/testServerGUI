@@ -67,7 +67,8 @@ HEADERS  += mainwindow.h \
     common/message/forcereloginmessage.h \
     common/message/connecttestmessage.h \
     common/message/connectokmessage.h \
-    myclient.h
+    myclient.h \
+    common/allmessage.h
 
 FORMS    += mainwindow.ui
 #LIBS += "F:/QtCreate/testServerGUI/MySqlDLL.lib"
