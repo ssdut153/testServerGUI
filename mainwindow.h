@@ -2,6 +2,8 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QtWidgets/QTextEdit>
+
 
 namespace Ui {
 class MainWindow;
@@ -18,9 +20,14 @@ public:
 private:
     Ui::MainWindow *ui;
 
+
 private slots:
     void acceptConnection();
     void readClient();
+    void on_pushButton_clicked();
+    void on_pushButton_2_clicked();
+    void on_pushButton_3_clicked();
+    void on_pushButton_4_clicked();
 };
 
 #endif // MAINWINDOW_H
