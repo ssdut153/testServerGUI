@@ -16,6 +16,14 @@ Sqlite::~Sqlite()
     dbconn.close();
 }
 
+bool Sqlite::queryexec(const char* sqltext)
+{
+    QSqlQuery query;
+    if(!query.exec(sqltext))
+        return false;
+    return true;
+}
+
 bool Sqlite::checkpassword(const char *username,const char *password)
 {
     QSqlQuery query;
@@ -47,7 +55,7 @@ bool Sqlite::reguser(const char* username,const char* password,char* vip)//salt,
     QString sqltext="insert into users (username,password,salt,regdate,vip) values('"+u+"','"+p+"','"+s+"','"+d+"',"+v+")";
     if(!query.exec(sqltext))
         return false;
-    QString sqltext2="create table "+u+" (uid integer PRIMARY KEY autoincrement,username varchar(10),status int)";
+    QString sqltext2="create table "+u+" (uid integer PRIMARY KEY autoincrement,username varchar(10) UNIQUE,status int)";
     if(!query.exec(sqltext2))
         return false;
     return true;

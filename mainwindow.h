@@ -4,7 +4,7 @@
 #include <QMainWindow>
 #include <QtWidgets/QTextEdit>
 #include "myclient.h"
-
+#include <QCloseEvent>
 namespace Ui {
 class MainWindow;
 }
@@ -19,16 +19,19 @@ public:
 
 private:
     Ui::MainWindow *ui;
-    QString login(std::string textJson,MyClient* socket,int ind);
 
 
 private slots:
     void acceptConnection();
     void readClient(int);
+    void disconnect(int);
     void on_pushButton_clicked();
     void on_pushButton_2_clicked();
     void on_pushButton_3_clicked();
     void on_pushButton_4_clicked();
+
+protected:
+    void closeEvent(QCloseEvent* event);
 };
 
 #endif // MAINWINDOW_H

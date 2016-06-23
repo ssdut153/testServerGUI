@@ -40,7 +40,9 @@ SOURCES += main.cpp\
     common/message/forcereloginmessage.cpp \
     common/message/connecttestmessage.cpp \
     common/message/connectokmessage.cpp \
-    myclient.cpp
+    myclient.cpp \
+    common/message/regusermessage.cpp \
+    common/message/regfeedbackmessage.cpp
 
 HEADERS  += mainwindow.h \
     sqlite.h \
@@ -68,7 +70,9 @@ HEADERS  += mainwindow.h \
     common/message/connecttestmessage.h \
     common/message/connectokmessage.h \
     myclient.h \
-    common/allmessage.h
+    common/allmessage.h \
+    common/message/regusermessage.h \
+    common/message/regfeedbackmessage.h
 
 FORMS    += mainwindow.ui
 #LIBS += "F:/QtCreate/testServerGUI/MySqlDLL.lib"

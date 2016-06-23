@@ -8,12 +8,17 @@
 #include "helper.h"
 #include <vector>
 #include "common/allmessage.h"
-QTcpSocket *client;
+//#include <QMessageBox>
+//  TODO：增加日志写到文件的功能
 QTcpServer *server;
+
+int clientSize=0;
 std::vector<MyClient> clients;
 QSignalMapper *signalMapper;
+//QSignalMapper *signalMapper2;
+
 Sqlite *sqlite;
-int clientSize=0;
+
 void MainWindow::acceptConnection()
 {
     QString tem;
@@ -23,16 +28,20 @@ void MainWindow::acceptConnection()
     //clientConnection = clients[clientSize-1].client;
 
     QString conne;
-    QTextStream(&conne)<<"New connection:"<<clients[clientSize-1].client->peerName()<<"\t"<<clients[clientSize-1].client->peerAddress().toString()<<"\t"<<clients[clientSize-1].client->peerPort()<<" @"<<Helper::getDateTime();
+    QTextStream(&conne)<<"New connection: "<<clients[clientSize-1].client->peerAddress().toString()<<"\t"<<clients[clientSize-1].client->peerPort()<<" @"<<Helper::getDateTime();
     ui->textEdit->append(conne);
 
     connect(clients[clientSize-1].client, SIGNAL(readyRead()), signalMapper, SLOT(map()));
     signalMapper->setMapping(clients[clientSize-1].client, clientSize-1);
     connect(signalMapper, SIGNAL(mapped(int)), this, SLOT(readClient(int)));
 
+    //  TODO：绑定离线事件
+    //connect(clients[clientSize-1].client, SIGNAL(disConnected()), signalMapper2, SLOT(map()));
+    //signalMapper2->setMapping(clients[clientSize-1].client, clientSize-1);
+    //connect(signalMapper2, SIGNAL(mapped(int)), this, SLOT(disconnect(int)));
     //connect(clients[clientSize-1].client, SIGNAL(readyRead()), this, SLOT(readClient(QTcpSocket*)));
 }
-QString MainWindow::login(std::string textJson,MyClient* socket,int ind)
+QString login(std::string textJson,MyClient* socket,int ind)
 {
     loginMessage loginmessage;
     QString res;
@@ -44,16 +53,8 @@ QString MainWindow::login(std::string textJson,MyClient* socket,int ind)
         socket->username=loginmessage.user;
         socket->client->write(feedback.getJsonString().c_str());
         QTextStream(&res)<<loginmessage.user.c_str()<<" log in success @"<<Helper::getDateTime()<<" &scoketName:"<<QString::fromStdString(clients[ind].username);
-        /*
-        for (int i=0;i<clientSize;i++)
-        {
-            if(clients[i].index!=ind&&clients[i].username==loginmessage.user)
-            {
-                clients[i].client->write("{\"head\":\"forceLogOut\"}");
-                break;
-            }
-        }
-        */
+
+        //  TODO：强制已在线同一用户名登出
     }
     else
     {
@@ -63,6 +64,39 @@ QString MainWindow::login(std::string textJson,MyClient* socket,int ind)
     }
     return res;
 }
+QString regUser(std::string textJson,MyClient* socket,int ind)
+{
+    regUserMessage regusermessage;
+    QString res;
+    regusermessage.loadfromJson(textJson);
+
+    if(sqlite->reguser(regusermessage.user.c_str(),regusermessage.pass.c_str(),"0"))
+    {
+        regFeedBackMessage feedback(regusermessage.user,"true");
+        socket->client->write(feedback.getJsonString().c_str());
+        QTextStream(&res)<<regusermessage.user.c_str()<<" reg success @"<<Helper::getDateTime();
+    }
+    else
+    {
+        loginFeedBackMessage feedback(regusermessage.user,"false");
+        socket->client->write(feedback.getJsonString().c_str());
+        QTextStream(&res)<<regusermessage.user.c_str()<<" reg fail @"<<Helper::getDateTime();
+    }
+    return res;
+}
+void MainWindow::disconnect(int ind)
+{
+    for (int i=0;i<clientSize;i++)
+    {
+        if(clients[i].index==ind)
+        {
+            clients.erase(clients.begin()+i);
+            return;
+        }
+    }
+    //clientConnection->close();
+}
+void offline(std::string username){}
 
 void MainWindow::readClient(int ind)
 {
@@ -77,33 +111,41 @@ void MainWindow::readClient(int ind)
         }
     }
     QString str = tempSocket->readAll();
-    //下列代码实现read会乱码不论中英文
-    //char buf[1024];
-    //clientConnection->read(buf,1024);
 
+    //  解析消息类型
     if(!str.isEmpty())
     {
-        QString log;
-        QTextStream(&log)<<str<<" @"<<Helper::getDateTime();
-        ui->textEdit->append(log);
-
         //std::string head="login";
         std::string head=Helper::getHeadfromJson(str.toStdString());
         if(head=="login")
             ui->textEdit->append(login(str.toStdString(),&clients[i],i));
+        else if(head=="logout")
+        {
+            QString log;
+            QTextStream(&log)<<QString::fromStdString(clients[i].username)<<" log out @"<<Helper::getDateTime();
+            offline(clients[i].username);
+            clientSize--;
+            clients.erase(clients.begin()+i);
+            ui->textEdit->append(log);
+        }
+        else if(head=="regUser")
+            ui->textEdit->append(regUser(str.toStdString(),&clients[i],i));
         else
         {
+            QString log;
+            QTextStream(&log)<<str<<" @"<<Helper::getDateTime();
+            ui->textEdit->append(log);
             tempSocket->write("I received your message:");
             tempSocket->write(str.toStdString().c_str());
         }
     }
-
-
-
     //clientConnection->close();
 }
 //{"head":"login","username":"testuser88","password":"testuser"}
+//{"head":"logout","username":"testuser88"}
+//{"head":"regUser","username":"testuser","password":"testuser"}
 
+//create table users(uid integer primary key autoincrement,username varchar(20) UNIQUE,salt varchar(10),password varchar(70),regdate datetime,ip varchar(20),logindate datetime,vip int)
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -115,7 +157,7 @@ MainWindow::MainWindow(QWidget *parent) :
     signalMapper = new QSignalMapper(this);
     //  初始化Sqlite类
     sqlite=new Sqlite();
-    /*
+/*
     loginMessage test("testuser","testpassword");
     std::string tempjson=test.getJsonString();
     ui->textEdit->append(QString::fromStdString(tempjson));
@@ -123,8 +165,7 @@ MainWindow::MainWindow(QWidget *parent) :
     testload.loadfromJson(tempjson);
     ui->textEdit->append(QString::fromStdString(testload.user));
     ui->textEdit->append(QString::fromStdString(testload.pass));
-   */
-    /*
+*//*
     loginFeedBackMessage test("testuser","true");
     std::string tempjson=test.getJsonString();
     ui->textEdit->append(QString::fromStdString(tempjson));
@@ -133,7 +174,32 @@ MainWindow::MainWindow(QWidget *parent) :
     testload.loadfromJson(tempjson);
     ui->textEdit->append(QString::fromStdString(testload.user));
     ui->textEdit->append(QString::fromStdString(testload.stat));
-    */
+*//*
+    logoutMessage test("testuser");
+    std::string tempjson=test.getJsonString();
+    ui->textEdit->append(QString::fromStdString(tempjson));
+
+    logoutMessage testload;
+    testload.loadfromJson(tempjson);
+    ui->textEdit->append(QString::fromStdString(testload.user));
+*//*
+    regUserMessage test("testuser","testpassword");
+    std::string tempjson=test.getJsonString();
+    ui->textEdit->append(QString::fromStdString(tempjson));
+    regUserMessage testload;
+    testload.loadfromJson(tempjson);
+    ui->textEdit->append(QString::fromStdString(testload.user));
+    ui->textEdit->append(QString::fromStdString(testload.pass));
+*//*
+    regFeedBackMessage test("testuser","true");
+    std::string tempjson=test.getJsonString();
+    ui->textEdit->append(QString::fromStdString(tempjson));
+
+    regFeedBackMessage testload;
+    testload.loadfromJson(tempjson);
+    ui->textEdit->append(QString::fromStdString(testload.user));
+    ui->textEdit->append(QString::fromStdString(testload.stat));
+*/
     ui->textEdit->append(Helper::getDateTime());
 }
 
@@ -186,12 +252,30 @@ void MainWindow::on_pushButton_2_clicked()
 void MainWindow::on_pushButton_3_clicked()
 {
 
-    sqlite->reguser(ui->textEdit_3->toPlainText().toStdString().c_str(),ui->textEdit_2->toPlainText().toStdString().c_str(),"0");
-    ui->textEdit_2->setPlainText("");
-    ui->textEdit_3->setPlainText("");
+    QString res;
+    if(sqlite->queryexec(ui->textEdit_2->toPlainText().toStdString().c_str()))
+        QTextStream(&res)<<"sql:"<<ui->textEdit_2->toPlainText()<<"\texec true";
+    else
+        QTextStream(&res)<<"sql:"<<ui->textEdit_2->toPlainText()<<"\texec false";
+    ui->textEdit->append(res);
+   // sqlite->reguser(ui->textEdit_3->toPlainText().toStdString().c_str(),ui->textEdit_2->toPlainText().toStdString().c_str(),"0");
+   // ui->textEdit_2->setPlainText("");
+    //ui->textEdit_3->setPlainText("");
 }
 
 void MainWindow::on_pushButton_4_clicked()
 {
     ui->textEdit->append(Helper::getsalt(8));
+}
+
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    //QMessageBox msg(QMessageBox::Warning, "警告", "您真的要退出吗?", 0, 0);
+    //msg.setWindowFlags(Qt::WindowStaysOnTopHint| (this->windowFlags() &~ (Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint)));
+    //msg.addButton("是", QMessageBox::AcceptRole);
+    //msg.addButton("否", QMessageBox::RejectRole);
+    //if (msg.exec() == QMessageBox::RejectRole)
+    //{
+    //    event->ignore();
+    //}
 }

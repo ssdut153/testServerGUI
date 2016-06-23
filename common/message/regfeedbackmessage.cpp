@@ -1,21 +1,23 @@
-#include "logoutmessage.h"
+#include "regfeedbackmessage.h"
 #include "../cJSON.h"
-logoutMessage::logoutMessage(std::string username)
+regFeedBackMessage::regFeedBackMessage(std::string username,std::string status)
 {
     user=username;
-    head="logout";
+    stat=status;
+    head="regFeedBack";
 }
-logoutMessage::logoutMessage()
+regFeedBackMessage::regFeedBackMessage()
 {
-    head="logout";
+    head="regFeedBack";
 }
-std::string logoutMessage::getJsonString()
+std::string regFeedBackMessage::getJsonString()
 {
     // 创建JSON Object
     cJSON *root = cJSON_CreateObject();
     // 加入节点（键值对）
     cJSON_AddStringToObject(root,"head",head.c_str());
     cJSON_AddStringToObject(root,"username",user.c_str());
+    cJSON_AddStringToObject(root,"status",stat.c_str());
     // 打印JSON数据包
     char *out = cJSON_PrintUnformatted(root);
     // 释放内存
@@ -25,7 +27,7 @@ std::string logoutMessage::getJsonString()
     return temp;
 }
 
-bool logoutMessage::loadfromJson(std::string textJson)
+bool regFeedBackMessage::loadfromJson(std::string textJson)
 {
     cJSON *json , *json_username , *json_password;
     // 解析数据包
@@ -38,8 +40,12 @@ bool logoutMessage::loadfromJson(std::string textJson)
         // 解析username
         json_username = cJSON_GetObjectItem( json , "username");
         user=json_username->valuestring;
+        // 解析status
+        json_password = cJSON_GetObjectItem( json , "status");
+        stat=json_password->valuestring;
         // 释放内存空间
         cJSON_Delete(json);
         return true;
     }
+
 }

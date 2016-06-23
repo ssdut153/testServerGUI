@@ -10,7 +10,7 @@ public:
     ~Sqlite();
     bool checkpassword(const char* username,const char* password);
     bool reguser(const char* username,const char* password,char* vip);//salt,regdate,sha-256
-    bool queryexec(char* sqltext);
+    bool queryexec(const char* sqltext);
     char* select1(char* selecttext);
 private:
     QSqlDatabase dbconn;
