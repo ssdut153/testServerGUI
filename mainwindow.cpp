@@ -1,3 +1,18 @@
+/*****************************************************************************************
+ *  Copyright(c) 2016 Yang Zhizhuang (Software School of Dalian University of Technology)
+ *  All rights reserved.
+ *
+ *  文件名称: mainwindow.cpp
+ *  简要描述:
+ *
+ *  创建日期: 2016-6-21
+ *  作者: Yang Zhizhuang
+ *  说明:
+ *
+ *  修改日期:
+ *  作者:
+ *  说明:
+ ****************************************************************************************/
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <QtNetwork>
@@ -10,6 +25,7 @@
 #include "common/allmessage.h"
 //#include <QMessageBox>
 //  TODO：增加日志写到文件的功能
+char* logpath;
 QTcpServer *server;
 
 int clientSize=0;
@@ -18,18 +34,25 @@ QSignalMapper *signalMapper;
 //QSignalMapper *signalMapper2;
 
 Sqlite *sqlite;
-
+/**
+ * @brief MainWindow::acceptConnection
+ * SLOT:建立新TCP连接
+ */
 void MainWindow::acceptConnection()
 {
     QString tem;
     QTextStream(&tem)<<"temp"<<clientSize;
-    //ui->textEdit->append(tem);
     clients.push_back(MyClient(tem.toStdString(),server->nextPendingConnection(),clientSize++));
-    //clientConnection = clients[clientSize-1].client;
 
     QString conne;
     QTextStream(&conne)<<"New connection: "<<clients[clientSize-1].client->peerAddress().toString()<<"\t"<<clients[clientSize-1].client->peerPort()<<" @"<<Helper::getDateTime();
-    ui->textEdit->append(conne);
+    if(Helper::log(conne.toStdString().c_str(),logpath))
+        ui->textEdit->append(conne);
+    else
+    {
+        QTextStream(&conne)<<" log failed";
+        ui->textEdit->append(conne);
+    }
 
     connect(clients[clientSize-1].client, SIGNAL(readyRead()), signalMapper, SLOT(map()));
     signalMapper->setMapping(clients[clientSize-1].client, clientSize-1);
@@ -41,6 +64,13 @@ void MainWindow::acceptConnection()
     //connect(signalMapper2, SIGNAL(mapped(int)), this, SLOT(disconnect(int)));
     //connect(clients[clientSize-1].client, SIGNAL(readyRead()), this, SLOT(readClient(QTcpSocket*)));
 }
+/**
+ * @brief login
+ * @param textJson Json字符串
+ * @param socket MyClient类
+ * @param ind Index
+ * @return QString log
+ */
 QString login(std::string textJson,MyClient* socket,int ind)
 {
     loginMessage loginmessage;
@@ -64,6 +94,13 @@ QString login(std::string textJson,MyClient* socket,int ind)
     }
     return res;
 }
+/**
+ * @brief regUser
+ * @param textJson Json字符串
+ * @param socket MyClient类
+ * @param ind Index
+ * @return  QString log
+ */
 QString regUser(std::string textJson,MyClient* socket,int ind)
 {
     regUserMessage regusermessage;
@@ -84,6 +121,11 @@ QString regUser(std::string textJson,MyClient* socket,int ind)
     }
     return res;
 }
+/**
+ * @brief MainWindow::disconnect
+ * SLOT:断开TCP连接
+ * @param ind Index
+ */
 void MainWindow::disconnect(int ind)
 {
     for (int i=0;i<clientSize;i++)
@@ -96,8 +138,16 @@ void MainWindow::disconnect(int ind)
     }
     //clientConnection->close();
 }
+/**
+ * @brief offline
+ * @param username 用户名
+ */
 void offline(std::string username){}
-
+/**
+ * @brief MainWindow::readClient
+ * SLOT:读取数据
+ * @param ind Index
+ */
 void MainWindow::readClient(int ind)
 {
     QTcpSocket* tempSocket;
@@ -118,7 +168,16 @@ void MainWindow::readClient(int ind)
         //std::string head="login";
         std::string head=Helper::getHeadfromJson(str.toStdString());
         if(head=="login")
-            ui->textEdit->append(login(str.toStdString(),&clients[i],i));
+        {
+            QString log=login(str.toStdString(),&clients[i],i);
+            if(Helper::log(log.toStdString().c_str(),logpath))
+                ui->textEdit->append(log);
+            else
+            {
+                QTextStream(&log)<<" log failed";
+                ui->textEdit->append(log);
+            }
+        }
         else if(head=="logout")
         {
             QString log;
@@ -126,17 +185,38 @@ void MainWindow::readClient(int ind)
             offline(clients[i].username);
             clientSize--;
             clients.erase(clients.begin()+i);
-            ui->textEdit->append(log);
+            if(Helper::log(log.toStdString().c_str(),logpath))
+                ui->textEdit->append(log);
+            else
+            {
+                QTextStream(&log)<<" log failed";
+                ui->textEdit->append(log);
+            }
         }
         else if(head=="regUser")
-            ui->textEdit->append(regUser(str.toStdString(),&clients[i],i));
+        {
+            QString log=regUser(str.toStdString(),&clients[i],i);
+            if(Helper::log(log.toStdString().c_str(),logpath))
+                ui->textEdit->append(log);
+            else
+            {
+                QTextStream(&log)<<" log failed";
+                ui->textEdit->append(log);
+            }
+        }
         else
         {
             QString log;
             QTextStream(&log)<<str<<" @"<<Helper::getDateTime();
-            ui->textEdit->append(log);
             tempSocket->write("I received your message:");
             tempSocket->write(str.toStdString().c_str());
+            if(Helper::log(log.toStdString().c_str(),logpath))
+                ui->textEdit->append(log);
+            else
+            {
+                QTextStream(&log)<<" log failed";
+                ui->textEdit->append(log);
+            }
         }
     }
     //clientConnection->close();
@@ -146,6 +226,11 @@ void MainWindow::readClient(int ind)
 //{"head":"regUser","username":"testuser","password":"testuser"}
 
 //create table users(uid integer primary key autoincrement,username varchar(20) UNIQUE,salt varchar(10),password varchar(70),regdate datetime,ip varchar(20),logindate datetime,vip int)
+/**
+ * @brief MainWindow::MainWindow
+ * 窗口主程序
+ * @param parent
+ */
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -157,7 +242,7 @@ MainWindow::MainWindow(QWidget *parent) :
     signalMapper = new QSignalMapper(this);
     //  初始化Sqlite类
     sqlite=new Sqlite();
-/*
+    /*
     loginMessage test("testuser","testpassword");
     std::string tempjson=test.getJsonString();
     ui->textEdit->append(QString::fromStdString(tempjson));
@@ -200,14 +285,28 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->textEdit->append(QString::fromStdString(testload.user));
     ui->textEdit->append(QString::fromStdString(testload.stat));
 */
-    ui->textEdit->append(Helper::getDateTime());
+    logpath=(char*)malloc(sizeof(char)*1024);
+    Helper::getLogPath(logpath);
+    QString log;
+    QTextStream(&log)<<"Server start @"<<Helper::getDateTime();
+    if(Helper::log(log.toStdString().c_str(),logpath))
+        ui->textEdit->append(log);
+    else
+    {
+        QTextStream(&log)<<" log failed";
+        ui->textEdit->append(log);
+    }
 }
-
+/**
+ * @brief MainWindow::~MainWindow
+ */
 MainWindow::~MainWindow()
 {
     delete ui;
 }
-
+/**
+ * @brief MainWindow::on_pushButton_clicked
+ */
 void MainWindow::on_pushButton_clicked()
 {
 
@@ -225,7 +324,9 @@ void MainWindow::on_pushButton_clicked()
     tempSocket->write(ch);
     ui->textEdit_2->setPlainText("");
 }
-
+/**
+ * @brief MainWindow::on_pushButton_2_clicked
+ */
 void MainWindow::on_pushButton_2_clicked()
 {
     QSqlQuery query;
@@ -244,11 +345,10 @@ void MainWindow::on_pushButton_2_clicked()
         QString ele9=query.value(9).toString();
         ui->textEdit->append(ele0+"  "+ele1+"  "+ele2+"  "+ele3+"  "+ele4+"  "+ele5+"  "+ele6+"  "+ele7+"  "+ele8+"  "+ele9);//输出两个值
     }
-
 }
-
-
-
+/**
+ * @brief MainWindow::on_pushButton_3_clicked
+ */
 void MainWindow::on_pushButton_3_clicked()
 {
 
@@ -257,17 +357,28 @@ void MainWindow::on_pushButton_3_clicked()
         QTextStream(&res)<<"sql:"<<ui->textEdit_2->toPlainText()<<"\texec true";
     else
         QTextStream(&res)<<"sql:"<<ui->textEdit_2->toPlainText()<<"\texec false";
-    ui->textEdit->append(res);
-   // sqlite->reguser(ui->textEdit_3->toPlainText().toStdString().c_str(),ui->textEdit_2->toPlainText().toStdString().c_str(),"0");
-   // ui->textEdit_2->setPlainText("");
+    if(Helper::log(res.toStdString().c_str(),logpath))
+        ui->textEdit->append(res);
+    else
+    {
+        QTextStream(&res)<<" log failed";
+        ui->textEdit->append(res);
+    }
+    // sqlite->reguser(ui->textEdit_3->toPlainText().toStdString().c_str(),ui->textEdit_2->toPlainText().toStdString().c_str(),"0");
+    // ui->textEdit_2->setPlainText("");
     //ui->textEdit_3->setPlainText("");
 }
-
+/**
+ * @brief MainWindow::on_pushButton_4_clicked
+ */
 void MainWindow::on_pushButton_4_clicked()
 {
     ui->textEdit->append(Helper::getsalt(8));
 }
-
+/**
+ * @brief MainWindow::closeEvent
+ * @param event
+ */
 void MainWindow::closeEvent(QCloseEvent *event)
 {
     //QMessageBox msg(QMessageBox::Warning, "警告", "您真的要退出吗?", 0, 0);
@@ -278,4 +389,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
     //{
     //    event->ignore();
     //}
+    QString log;
+    QTextStream(&log)<<"Server stop @"<<Helper::getDateTime();
+    Helper::log(log.toStdString().c_str(),logpath);
 }

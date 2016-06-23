@@ -1,15 +1,42 @@
+/*****************************************************************************************
+ *  Copyright(c) 2016 Yang Zhizhuang (Software School of Dalian University of Technology)
+ *  All rights reserved.
+ *
+ *  文件名称: loginmessage.cpp
+ *  简要描述:
+ *
+ *  创建日期: 2016-6-22
+ *  作者: Yang Zhizhuang
+ *  说明:
+ *
+ *  修改日期:
+ *  作者:
+ *  说明:
+ ****************************************************************************************/
 #include "loginmessage.h"
 #include "../cJSON.h"
+/**
+ * @brief loginMessage::loginMessage
+ * @param username 用户名
+ * @param password 密码
+ */
 loginMessage::loginMessage(std::string username,std::string password)
 {
     user=username;
     pass=password;
     head="login";
 }
+/**
+ * @brief loginMessage::loginMessage
+ */
 loginMessage::loginMessage()
 {
     head="login";
 }
+/**
+ * @brief loginMessage::getJsonString
+ * @return  对应的单行Json字符串
+ */
 std::string loginMessage::getJsonString()
 {
     // 创建JSON Object
@@ -26,7 +53,11 @@ std::string loginMessage::getJsonString()
     free(out);
     return temp;
 }
-
+/**
+ * @brief loginMessage::loadfromJson
+ * @param textJson Json字符串
+ * @return  bool 是否载入成功
+ */
 bool loginMessage::loadfromJson(std::string textJson)
 {
     cJSON *json , *json_username , *json_password;

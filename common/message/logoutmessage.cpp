@@ -1,14 +1,40 @@
+/*****************************************************************************************
+ *  Copyright(c) 2016 Yang Zhizhuang (Software School of Dalian University of Technology)
+ *  All rights reserved.
+ *
+ *  文件名称: logoutmessage.cpp
+ *  简要描述:
+ *
+ *  创建日期:
+ *  作者:
+ *  说明:
+ *
+ *  修改日期:
+ *  作者:
+ *  说明:
+ ****************************************************************************************/
 #include "logoutmessage.h"
 #include "../cJSON.h"
+/**
+ * @brief logoutMessage::logoutMessage
+ * @param username 用户名
+ */
 logoutMessage::logoutMessage(std::string username)
 {
     user=username;
     head="logout";
 }
+/**
+ * @brief logoutMessage::logoutMessage
+ */
 logoutMessage::logoutMessage()
 {
     head="logout";
 }
+/**
+ * @brief logoutMessage::getJsonString
+ * @return  对应的单行Json字符串
+ */
 std::string logoutMessage::getJsonString()
 {
     // 创建JSON Object
@@ -24,10 +50,14 @@ std::string logoutMessage::getJsonString()
     free(out);
     return temp;
 }
-
+/**
+ * @brief logoutMessage::loadfromJson
+ * @param textJson Json字符串
+ * @return  bool 是否载入成功
+ */
 bool logoutMessage::loadfromJson(std::string textJson)
 {
-    cJSON *json , *json_username , *json_password;
+    cJSON *json , *json_username;
     // 解析数据包
     const char* text = textJson.c_str();
     json = cJSON_Parse(text);
