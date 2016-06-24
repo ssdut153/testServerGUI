@@ -2,7 +2,7 @@
  *  Copyright(c) 2016 Yang Zhizhuang (Software School of Dalian University of Technology)
  *  All rights reserved.
  *
- *  文件名称: message.cpp
+ *  文件名称: myclient.cpp
  *  简要描述:
  *
  *  创建日期: 2016-6-22
@@ -13,36 +13,16 @@
  *  作者:
  *  说明:
  ****************************************************************************************/
-#include "message.h"
+#include "myclient.h"
 /**
- * @brief Message::Message
+ * @brief MyClient::MyClient
+ * @param user 用户名
+ * @param clientConnection 
+ * @param i
  */
-Message::Message()
+MyClient::MyClient(std::string user,QTcpSocket *clientConnection,int i)
 {
-    head="";
+    username=user;
+    client=clientConnection;
+    index=i;
 }
-/**
- * @brief Message::Message
- * @param h 头
- */
-Message::Message(std::string h)
-{
-    head=h;
-}
-/**
- * @brief Message::addHead
- * @param h 头
- */
-void Message::addHead(std::string h)
-{
-    head=h;
-}
-/**
- * @brief Message::getHead
- * @return 头
- */
-std::string Message::getHead()
-{
-    return head;
-}
-

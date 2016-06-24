@@ -380,15 +380,15 @@ void MainWindow::on_pushButton_2_clicked()
     ui->textEdit->append(query.exec("select * from users")?"select true":"select error");
     while(query.next())//query.next()指向查找到的第一条记录，然后每次后移一条记录
     {
-        QString ele0=query.value(0).toString();//query.value(0)是id的值，将其转换为int型
+        QString ele0=query.value(0).toString();
         QString ele1=query.value(1).toString();
-        QString ele2=query.value(2).toString();//query.value(0)是id的值，将其转换为int型
+        QString ele2=query.value(2).toString();
         QString ele3=query.value(3).toString();
-        QString ele4=query.value(4).toString();//query.value(0)是id的值，将其转换为int型
+        QString ele4=query.value(4).toString();
         QString ele5=query.value(5).toString();
-        QString ele6=query.value(6).toString();//query.value(0)是id的值，将其转换为int型
+        QString ele6=query.value(6).toString();
         QString ele7=query.value(7).toString();
-        QString ele8=query.value(8).toString();//query.value(0)是id的值，将其转换为int型
+        QString ele8=query.value(8).toString();
         QString ele9=query.value(9).toString();
         ui->textEdit->append(ele0+"  "+ele1+"  "+ele2+"  "+ele3+"  "+ele4+"  "+ele5+"  "+ele6+"  "+ele7+"  "+ele8+"  "+ele9);//输出两个值
     }

@@ -107,6 +107,10 @@ std::string Helper::getHeadfromJson(std::string textJson)
     catch(...)
     {return "false";}
 }
+/**
+ * @brief Helper::getLogPath
+ * @param logPath 保存用的指针
+ */
 void Helper::getLogPath(char* logPath)
 {
     FILE* fp=fopen("logpath","r");
@@ -118,6 +122,7 @@ void Helper::getLogPath(char* logPath)
 
 /**
  * @brief Helper::getLogFileName
+ * @param logPath char* 保存的路径
  * @return logPath+yyyy_mm_dd.txt
  */
 const char* Helper::getLogFileName(char* logPath)
@@ -134,6 +139,7 @@ const char* Helper::getLogFileName(char* logPath)
 /**
  * @brief Helper::log
  * @param logText const char* 记录的文本
+ * @param logPath char* 保存到的文件绝对路径
  * @return 是否记录成功
  */
 bool Helper::log(const char* logText,char* logPath)

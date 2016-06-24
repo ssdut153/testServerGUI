@@ -18,6 +18,9 @@
 #include "./common/allmessage.h"
 #include <iostream>
 #include <string>
+/**
+ * @brief Sqlite::Sqlite
+ */
 Sqlite::Sqlite()
 {
     dbconn=QSqlDatabase::addDatabase("QSQLITE");    //添加数据库驱动
@@ -26,12 +29,18 @@ Sqlite::Sqlite()
         exit(-1);
     }
 }
-
+/**
+ * @brief Sqlite::~Sqlite
+ */
 Sqlite::~Sqlite()
 {
     dbconn.close();
 }
-
+/**
+ * @brief Sqlite::queryexec
+ * @param sqltext sql语句
+ * @return bool
+ */
 bool Sqlite::queryexec(const char* sqltext)
 {
     QSqlQuery query;
@@ -39,6 +48,12 @@ bool Sqlite::queryexec(const char* sqltext)
         return false;
     return true;
 }
+/**
+ * @brief Sqlite::sendfriendlist
+ * @param username 用户名
+ * @param client QTcpSocket*
+ * @return bool
+ */
 bool Sqlite::sendfriendlist(const char* username,QTcpSocket* client)
 {
     QSqlQuery query;
@@ -58,7 +73,12 @@ bool Sqlite::sendfriendlist(const char* username,QTcpSocket* client)
     client->write(endsendlistmessage.getJsonString().c_str());
     return true;
 }
-
+/**
+ * @brief Sqlite::checkpassword
+ * @param username 用户名
+ * @param password 密码
+ * @return bool
+ */
 bool Sqlite::checkpassword(const char *username,const char *password)
 {
     QSqlQuery query;
@@ -75,7 +95,13 @@ bool Sqlite::checkpassword(const char *username,const char *password)
     else
         return false;
 }
-
+/**
+ * @brief Sqlite::reguser
+ * @param username 用户名
+ * @param password 密码
+ * @param vip 是否为vip(0,1)
+ * @return bool
+ */
 bool Sqlite::reguser(const char* username,const char* password,char* vip)//salt,regdate,sha-256
 {
     QSqlQuery query;
