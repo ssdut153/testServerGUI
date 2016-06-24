@@ -15,6 +15,7 @@
  ****************************************************************************************/
 #include "sqlite.h"
 #include "helper.h"
+#include "./common/allmessage.h"
 #include <iostream>
 #include <string>
 Sqlite::Sqlite()
@@ -38,13 +39,33 @@ bool Sqlite::queryexec(const char* sqltext)
         return false;
     return true;
 }
+bool Sqlite::sendfriendlist(const char* username,QTcpSocket* client)
+{
+    QSqlQuery query;
+    QString u=username;
+    QString sqltext="select username from "+u+" where status=1";
+    if(!query.exec(sqltext))
+        return false;
+    startSendListMessage startsendlistmessage;
+    client->write(startsendlistmessage.getJsonString().c_str());
+    while(query.next())//query.next()指向查找到的第一条记录，然后每次后移一条记录
+    {
+        QString ele0=query.value(0).toString();//query.value(0)是id的值，将其转换为int型
+        friendListMessage friendlistmessage(ele0.toStdString());
+        client->write(friendlistmessage.getJsonString().c_str());
+    }
+    endSendListMessage endsendlistmessage;
+    client->write(endsendlistmessage.getJsonString().c_str());
+    return true;
+}
 
 bool Sqlite::checkpassword(const char *username,const char *password)
 {
     QSqlQuery query;
     QString u=username;
     QString sqltext="select password,salt from users where username='"+u+"'";
-    query.exec(sqltext);
+    if(!query.exec(sqltext))
+        return false;
     query.next();
     QString pass=query.value(0).toString();
     QString salt=query.value(1).toString();

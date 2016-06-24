@@ -15,7 +15,7 @@
  ****************************************************************************************/
 #ifndef AJFRIENDMESSAGE_H
 #define AJFRIENDMESSAGE_H
-#include "message.h"
+#include "./base/message.h"
 
 class ajFriendMessage : public Message
 {

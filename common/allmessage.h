@@ -7,7 +7,7 @@
  *
  *  创建日期: 2016-6-23
  *  作者: Yang Zhizhuang
- *  说明:
+ *  说明: Include all messages
  *
  *  修改日期:
  *  作者:
@@ -24,8 +24,10 @@
 #include "message/regusermessage.h"         //  2016-6-23
 #include "message/regfeedbackmessage.h"     //  2016-6-23
 
-//#include "message/getfriendlistmessage.h"
-//#include "message/friendlistmessage.h"
+#include "message/getfriendlistmessage.h"   //  2016-6-24
+#include "message/startsendlistmessage.h"   //  2016-6-24
+#include "message/friendlistmessage.h"      //  2016-6-24
+#include "message/endsendlistmessage.h"     //  2016-6-24
 
 //#include "message/searchusermessage.h"
 //#include "message/userinfomessage.h"

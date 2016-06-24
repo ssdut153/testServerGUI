@@ -15,7 +15,7 @@
  ****************************************************************************************/
 #ifndef SEARCHUSERMESSAGE_H
 #define SEARCHUSERMESSAGE_H
-#include "message.h"
+#include "./base/message.h"
 
 class searchUserMessage : public Message
 {

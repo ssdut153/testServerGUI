@@ -5,8 +5,8 @@
  *  文件名称: getfriendlistmessage.h
  *  简要描述:
  *
- *  创建日期:
- *  作者:
+ *  创建日期: 2016-6-24
+ *  作者: Yang Zhizhuang
  *  说明:
  *
  *  修改日期:
@@ -15,12 +15,13 @@
  ****************************************************************************************/
 #ifndef GETFRIENDLISTMESSAGE_H
 #define GETFRIENDLISTMESSAGE_H
-#include "message.h"
+#include "./base/usernamemessage.h"
 
-class getFriendListMessage : public Message
+class getFriendListMessage : public usernameMessage
 {
 public:
     getFriendListMessage();
+    getFriendListMessage(std::string username);
 };
 
 #endif // GETFRIENDLISTMESSAGE_H

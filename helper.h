@@ -11,7 +11,7 @@
  *
  *  修改日期: 2016-6-23
  *  作者: Yang Zhizhuang
- *  说明: 增加getLogFileName函数和log函数
+ *  说明: 增加getLogFileName函数和log函数以及getLogPath函数
  ****************************************************************************************/
 #ifndef HELPER_H
 #define HELPER_H

@@ -20,7 +20,7 @@ SOURCES += main.cpp\
     helper.cpp \
     md5/md5.cpp \
     common/cJSON.c \
-    common/message/message.cpp \
+    common/message/base/message.cpp \
     common/user.cpp \
     common/message/loginmessage.cpp \
     common/message/loginfeedbackmessage.cpp \
@@ -42,14 +42,18 @@ SOURCES += main.cpp\
     common/message/connectokmessage.cpp \
     myclient.cpp \
     common/message/regusermessage.cpp \
-    common/message/regfeedbackmessage.cpp
+    common/message/regfeedbackmessage.cpp \
+    common/message/base/requestmessage.cpp \
+    common/message/endsendlistmessage.cpp \
+    common/message/startsendlistmessage.cpp \
+    common/message/base/usernamemessage.cpp
 
 HEADERS  += mainwindow.h \
     sqlite.h \
     helper.h \
     md5/md5.h \
     common/cJSON.h \
-    common/message/message.h \
+    common/message/base/message.h \
     common/user.h \
     common/message/loginmessage.h \
     common/message/loginfeedbackmessage.h \
@@ -72,7 +76,11 @@ HEADERS  += mainwindow.h \
     myclient.h \
     common/allmessage.h \
     common/message/regusermessage.h \
-    common/message/regfeedbackmessage.h
+    common/message/regfeedbackmessage.h \
+    common/message/base/requestmessage.h \
+    common/message/endsendlistmessage.h \
+    common/message/startsendlistmessage.h \
+    common/message/base/usernamemessage.h
 
 FORMS    += mainwindow.ui
 #LIBS += "F:/QtCreate/testServerGUI/MySqlDLL.lib"

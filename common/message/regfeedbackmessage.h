@@ -15,7 +15,7 @@
  ****************************************************************************************/
 #ifndef REGFEEDBACKMESSAGE_H
 #define REGFEEDBACKMESSAGE_H
-#include "message.h"
+#include "./base/message.h"
 
 class regFeedBackMessage : public Message
 {

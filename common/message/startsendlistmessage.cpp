@@ -2,7 +2,7 @@
  *  Copyright(c) 2016 Yang Zhizhuang (Software School of Dalian University of Technology)
  *  All rights reserved.
  *
- *  文件名称: friendlistmessage.h
+ *  文件名称: startsendlistmessage.cpp
  *  简要描述:
  *
  *  创建日期: 2016-6-24
@@ -13,15 +13,9 @@
  *  作者:
  *  说明:
  ****************************************************************************************/
-#ifndef FRIENDLISTMESSAGE_H
-#define FRIENDLISTMESSAGE_H
-#include "./base/usernamemessage.h"
+#include "startsendlistmessage.h"
 
-class friendListMessage : public usernameMessage
+startSendListMessage::startSendListMessage()
 {
-public:
-    friendListMessage();
-    friendListMessage(std::string username);
-};
-
-#endif // FRIENDLISTMESSAGE_H
+    head="startSendList";
+}

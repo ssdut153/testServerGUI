@@ -15,7 +15,7 @@
  ****************************************************************************************/
 #ifndef P2PMESSAGE_H
 #define P2PMESSAGE_H
-#include "message.h"
+#include "./base/message.h"
 
 class p2pMessage : public Message
 {

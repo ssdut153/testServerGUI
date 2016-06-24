@@ -15,7 +15,7 @@
  ****************************************************************************************/
 #ifndef FORCELOGOUTMESSAGE_H
 #define FORCELOGOUTMESSAGE_H
-#include "message.h"
+#include "./base/message.h"
 
 class forceLogoutMessage : public Message
 {

@@ -15,7 +15,7 @@
  ****************************************************************************************/
 #ifndef FORCERELOGINMESSAGE_H
 #define FORCERELOGINMESSAGE_H
-#include "message.h"
+#include "./base/message.h"
 
 class forceReLoginMessage : public Message
 {

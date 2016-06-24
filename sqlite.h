@@ -18,6 +18,7 @@
 
 #include <QtSql>
 #include <QString>
+#include <QtNetwork>
 class Sqlite
 {
 public:
@@ -27,6 +28,7 @@ public:
     bool reguser(const char* username,const char* password,char* vip);//salt,regdate,sha-256
     bool queryexec(const char* sqltext);
     char* select1(char* selecttext);
+    bool sendfriendlist(const char* username,QTcpSocket* client);
 private:
     QSqlDatabase dbconn;
     QString regusersql="insert into users (username,password,salt,regdate,vip) values('?','?','?','?',?)";

@@ -15,7 +15,7 @@
  ****************************************************************************************/
 #ifndef OFFLINEMESSAGE_H
 #define OFFLINEMESSAGE_H
-#include "message.h"
+#include "./base/message.h"
 
 class offlineMessage : public Message
 {

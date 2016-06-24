@@ -7,7 +7,7 @@
  *
  *  创建日期: 2016-6-21
  *  作者: Yang Zhizhuang
- *  说明:
+ *  说明: 收到logout消息时没有断开并移除相应的连接
  *
  *  修改日期:
  *  作者:
@@ -21,6 +21,7 @@
 #include <QtSql>
 #include "sqlite.h"
 #include "helper.h"
+#include "myclient.h"
 #include <vector>
 #include "common/allmessage.h"
 //#include <QMessageBox>
@@ -109,34 +110,40 @@ QString regUser(std::string textJson,MyClient* socket,int ind)
 
     if(sqlite->reguser(regusermessage.user.c_str(),regusermessage.pass.c_str(),"0"))
     {
-        regFeedBackMessage feedback(regusermessage.user,"true");
+        regFeedBackMessage feedback(regusermessage.user, "true");
         socket->client->write(feedback.getJsonString().c_str());
         QTextStream(&res)<<regusermessage.user.c_str()<<" reg success @"<<Helper::getDateTime();
     }
     else
     {
-        loginFeedBackMessage feedback(regusermessage.user,"false");
+        regFeedBackMessage feedback(regusermessage.user,"false");
         socket->client->write(feedback.getJsonString().c_str());
         QTextStream(&res)<<regusermessage.user.c_str()<<" reg fail @"<<Helper::getDateTime();
     }
     return res;
 }
 /**
- * @brief MainWindow::disconnect
- * SLOT:断开TCP连接
+ * @brief getFriendList
+ * @param textJson Json字符串
+ * @param socket MyClient类
  * @param ind Index
+ * @return  QString log
  */
-void MainWindow::disconnect(int ind)
+QString getFriendList(std::string textJson,MyClient* socket,int ind)
 {
-    for (int i=0;i<clientSize;i++)
+    getFriendListMessage getfriendlistmessage;
+    QString res;
+    getfriendlistmessage.loadfromJson(textJson);
+
+    if(sqlite->sendfriendlist(getfriendlistmessage.user.c_str(),socket->client))
     {
-        if(clients[i].index==ind)
-        {
-            clients.erase(clients.begin()+i);
-            return;
-        }
+        QTextStream(&res)<<getfriendlistmessage.user.c_str()<<" send friend list success @"<<Helper::getDateTime();
     }
-    //clientConnection->close();
+    else
+    {
+        QTextStream(&res)<<getfriendlistmessage.user.c_str()<<" send friend list fail @"<<Helper::getDateTime();
+    }
+    return res;
 }
 /**
  * @brief offline
@@ -177,14 +184,20 @@ void MainWindow::readClient(int ind)
                 QTextStream(&log)<<" log failed";
                 ui->textEdit->append(log);
             }
+            return;
         }
         else if(head=="logout")
         {
+            logoutMessage logoutmessage;
+            logoutmessage.loadfromJson(str.toStdString());
             QString log;
-            QTextStream(&log)<<QString::fromStdString(clients[i].username)<<" log out @"<<Helper::getDateTime();
-            offline(clients[i].username);
-            clientSize--;
-            clients.erase(clients.begin()+i);
+            QTextStream(&log)<<QString::fromStdString(logoutmessage.user)<<" log out @"<<Helper::getDateTime();
+            offline(logoutmessage.user);
+            //移除前要disconnect
+            //clients[i].client=NULL;
+            //clients[i].username="~logout";
+            //clients.erase(clients.begin()+i);
+            //clientSize--;
             if(Helper::log(log.toStdString().c_str(),logpath))
                 ui->textEdit->append(log);
             else
@@ -192,6 +205,7 @@ void MainWindow::readClient(int ind)
                 QTextStream(&log)<<" log failed";
                 ui->textEdit->append(log);
             }
+            return;
         }
         else if(head=="regUser")
         {
@@ -203,6 +217,19 @@ void MainWindow::readClient(int ind)
                 QTextStream(&log)<<" log failed";
                 ui->textEdit->append(log);
             }
+            return;
+        }
+        else if(head=="getFriendList")
+        {
+            QString log=getFriendList(str.toStdString(),&clients[i],i);
+            if(Helper::log(log.toStdString().c_str(),logpath))
+                ui->textEdit->append(log);
+            else
+            {
+                QTextStream(&log)<<" log failed";
+                ui->textEdit->append(log);
+            }
+            return;
         }
         else
         {
@@ -217,6 +244,7 @@ void MainWindow::readClient(int ind)
                 QTextStream(&log)<<" log failed";
                 ui->textEdit->append(log);
             }
+            return;
         }
     }
     //clientConnection->close();
@@ -241,6 +269,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(server, SIGNAL(newConnection()), this, SLOT(acceptConnection()));
     signalMapper = new QSignalMapper(this);
     //  初始化Sqlite类
+
     sqlite=new Sqlite();
     /*
     loginMessage test("testuser","testpassword");
@@ -276,6 +305,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->textEdit->append(QString::fromStdString(testload.user));
     ui->textEdit->append(QString::fromStdString(testload.pass));
 *//*
+*
     regFeedBackMessage test("testuser","true");
     std::string tempjson=test.getJsonString();
     ui->textEdit->append(QString::fromStdString(tempjson));
@@ -284,7 +314,24 @@ MainWindow::MainWindow(QWidget *parent) :
     testload.loadfromJson(tempjson);
     ui->textEdit->append(QString::fromStdString(testload.user));
     ui->textEdit->append(QString::fromStdString(testload.stat));
-*/
+*//*
+    getFriendListMessage test;
+    std::string tempjson=test.getJsonString();
+    ui->textEdit->append(QString::fromStdString(tempjson));
+
+    getFriendListMessage testload;
+    testload.loadfromJson(tempjson);
+    ui->textEdit->append(QString::fromStdString(testload.head));
+*//*
+    friendListMessage test("testuser");
+    std::string tempjson=test.getJsonString();
+    ui->textEdit->append(QString::fromStdString(tempjson));
+
+    friendListMessage testload;
+    testload.loadfromJson(tempjson);
+    ui->textEdit->append(QString::fromStdString(testload.user));
+    */
+    //************************************************************
     logpath=(char*)malloc(sizeof(char)*1024);
     Helper::getLogPath(logpath);
     QString log;
@@ -373,7 +420,19 @@ void MainWindow::on_pushButton_3_clicked()
  */
 void MainWindow::on_pushButton_4_clicked()
 {
-    ui->textEdit->append(Helper::getsalt(8));
+    //ui->textEdit->append(Helper::getsalt(8));
+    //  TODO：输出所有在线用户的ip、port、socket名
+    ui->textEdit->append("Output start");
+    for (int i=0;i<clientSize;i++)
+    {
+        QString output;
+        QTextStream(&output)
+                <<QString::fromStdString(clients[i].username)
+               <<"\t"<<clients[i].client->peerAddress().toString()
+              <<"\t"<<clients[i].client->peerPort();
+        ui->textEdit->append(output);
+    }
+    ui->textEdit->append("Output end");
 }
 /**
  * @brief MainWindow::closeEvent

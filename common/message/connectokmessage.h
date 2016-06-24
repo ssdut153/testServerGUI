@@ -15,7 +15,7 @@
  ****************************************************************************************/
 #ifndef CONNECTOKMESSAGE_H
 #define CONNECTOKMESSAGE_H
-#include "message.h"
+#include "./base/message.h"
 
 class connectOkMessage : public Message
 {

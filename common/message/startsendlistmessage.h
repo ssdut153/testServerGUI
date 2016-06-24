@@ -2,10 +2,10 @@
  *  Copyright(c) 2016 Yang Zhizhuang (Software School of Dalian University of Technology)
  *  All rights reserved.
  *
- *  文件名称: loginmessage.h
+ *  文件名称: startsendlistmessage.h
  *  简要描述:
  *
- *  创建日期: 2016-6-22
+ *  创建日期: 2016-6-24
  *  作者: Yang Zhizhuang
  *  说明:
  *
@@ -13,19 +13,14 @@
  *  作者:
  *  说明:
  ****************************************************************************************/
-#ifndef LOGINMESSAGE_H
-#define LOGINMESSAGE_H
-#include "./base/message.h"
+#ifndef STARTSENDLISTMESSAGE_H
+#define STARTSENDLISTMESSAGE_H
+#include "./base/requestmessage.h"
 
-class loginMessage:public Message
+class startSendListMessage : public requestMessage
 {
 public:
-    loginMessage();
-    loginMessage(std::string username,std::string password);
-    std::string getJsonString();
-    bool loadfromJson(std::string textJson);
-    std::string user;
-    std::string pass;
+    startSendListMessage();
 };
 
-#endif // LOGINMESSAGE_H
+#endif // STARTSENTLISTMESSAGE_H

@@ -15,7 +15,7 @@
  ****************************************************************************************/
 #ifndef USERINFOMESSAGE_H
 #define USERINFOMESSAGE_H
-#include "message.h"
+#include "./base/message.h"
 
 class userInfoMessage : public Message
 {

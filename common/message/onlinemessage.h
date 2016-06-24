@@ -15,7 +15,7 @@
  ****************************************************************************************/
 #ifndef ONLINEMESSAGE_H
 #define ONLINEMESSAGE_H
-#include "message.h"
+#include "./base/message.h"
 
 class onlineMessage : public Message
 {

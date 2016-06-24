@@ -15,7 +15,7 @@
  ****************************************************************************************/
 #ifndef REGUSERMESSAGE_H
 #define REGUSERMESSAGE_H
-#include "message.h"
+#include "./base/message.h"
 
 class regUserMessage : public Message
 {

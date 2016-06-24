@@ -15,7 +15,7 @@
  ****************************************************************************************/
 #ifndef CONNECTTESTMESSAGE_H
 #define CONNECTTESTMESSAGE_H
-#include "message.h"
+#include "./base/message.h"
 
 class connectTestMessage : public Message
 {

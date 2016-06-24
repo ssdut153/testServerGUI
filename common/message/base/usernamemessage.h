@@ -2,10 +2,10 @@
  *  Copyright(c) 2016 Yang Zhizhuang (Software School of Dalian University of Technology)
  *  All rights reserved.
  *
- *  文件名称: message.h
+ *  文件名称: usernamemessage.h
  *  简要描述:
  *
- *  创建日期: 2016-6-22
+ *  创建日期: 2016-6-24
  *  作者: Yang Zhizhuang
  *  说明:
  *
@@ -13,23 +13,19 @@
  *  作者:
  *  说明:
  ****************************************************************************************/
-#ifndef MESSAGE_H
-#define MESSAGE_H
-#include <string>
+#include "message.h"
+#ifndef USERNAMEMESSAGE_H
+#define USERNAMEMESSAGE_H
 
-class Message
+
+class usernameMessage : public Message
 {
 public:
-    Message();
-    Message(std::string h);
-    virtual ~Message(){}
-    virtual std::string getJsonString()=0;
-    virtual bool loadfromJson(std::string textJson)=0;
-    void addHead(std::string h);
-    std::string getHead();
-protected:
-    std::string head;
+    usernameMessage();
+    usernameMessage(std::string username);
+    std::string getJsonString();
+    bool loadfromJson(std::string textJson);
+    std::string user;
 };
 
-
-#endif // MESSAGE_H
+#endif // USERNAMEMESSAGE_H
