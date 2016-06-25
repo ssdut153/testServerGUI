@@ -105,7 +105,7 @@ bool Sqlite::checkpassword(const char *username,const char *password)
  * @param vip 是否为vip(0,1)
  * @return bool
  */
-bool Sqlite::reguser(const char* username,const char* password,char* vip)//salt,regdate,sha-256
+bool Sqlite::reguser(const char* username,const char* password,const char* vip)//salt,regdate,sha-256
 {
     QSqlQuery query;
     char* salt=Helper::getsalt();

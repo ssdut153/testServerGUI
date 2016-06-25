@@ -18,7 +18,14 @@
 #include <time.h>
 #include "common/cJSON.h"
 #include <QTextStream>
+#include <QUuid>
 unsigned long seed=(unsigned long)time(0);
+QString Helper::newuuid()
+{
+    QUuid id=QUuid::createUuid();
+    return id.toString();
+}
+
 /**
  * @brief Helper::hash
  * @param text 需要hash的文本

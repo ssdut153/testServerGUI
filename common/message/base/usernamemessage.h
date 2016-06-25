@@ -13,10 +13,9 @@
  *  作者:
  *  说明:
  ****************************************************************************************/
-#include "message.h"
 #ifndef USERNAMEMESSAGE_H
 #define USERNAMEMESSAGE_H
-
+#include "message.h"
 
 class usernameMessage : public Message
 {

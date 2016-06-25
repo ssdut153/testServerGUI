@@ -24,6 +24,7 @@
 #include "myclient.h"
 #include <vector>
 #include "common/allmessage.h"
+
 //#include <QMessageBox>
 //  TODO：增加日志写到文件的功能
 char* logpath;
@@ -102,7 +103,7 @@ QString login(std::string textJson,MyClient* socket,int ind)
  * @param ind Index
  * @return  QString log
  */
-QString regUser(std::string textJson,MyClient* socket,int ind)
+QString regUser(std::string textJson,MyClient* socket)
 {
     regUserMessage regusermessage;
     QString res;
@@ -129,7 +130,7 @@ QString regUser(std::string textJson,MyClient* socket,int ind)
  * @param ind Index
  * @return  QString log
  */
-QString getFriendList(std::string textJson,MyClient* socket,int ind)
+QString getFriendList(std::string textJson,MyClient* socket)
 {
     getFriendListMessage getfriendlistmessage;
     QString res;
@@ -149,7 +150,7 @@ QString getFriendList(std::string textJson,MyClient* socket,int ind)
  * @brief offline
  * @param username 用户名
  */
-void offline(std::string username){}
+std::string offline(std::string username){return username;}
 /**
  * @brief MainWindow::readClient
  * SLOT:读取数据
@@ -157,7 +158,7 @@ void offline(std::string username){}
  */
 void MainWindow::readClient(int ind)
 {
-    QTcpSocket* tempSocket;
+    QTcpSocket* tempSocket=NULL;
     int i=0;
     for (;i<clientSize;i++)
     {
@@ -209,7 +210,7 @@ void MainWindow::readClient(int ind)
         }
         else if(head=="regUser")
         {
-            QString log=regUser(str.toStdString(),&clients[i],i);
+            QString log=regUser(str.toStdString(),&clients[i]);
             if(Helper::log(log.toStdString().c_str(),logpath))
                 ui->textEdit->append(log);
             else
@@ -221,7 +222,7 @@ void MainWindow::readClient(int ind)
         }
         else if(head=="getFriendList")
         {
-            QString log=getFriendList(str.toStdString(),&clients[i],i);
+            QString log=getFriendList(str.toStdString(),&clients[i]);
             if(Helper::log(log.toStdString().c_str(),logpath))
                 ui->textEdit->append(log);
             else
@@ -322,7 +323,7 @@ MainWindow::MainWindow(QWidget *parent) :
     getFriendListMessage testload;
     testload.loadfromJson(tempjson);
     ui->textEdit->append(QString::fromStdString(testload.head));
-*//*
+*//*{"head":"getFriendList","username":"testuser1"}
     std::string tempjson("[{\"username\":\"testuser3\"},{\"username\":\"testuser2\"},{\"username\":\"testuser4\"}]");
 
     friendListMessage testload;
@@ -330,7 +331,10 @@ MainWindow::MainWindow(QWidget *parent) :
     for(int i=0;i<testload.size;i++)
         ui->textEdit->append(QString::fromStdString(testload.user[i]));
 */
+    //  UUID
+    //ui->textEdit->append(Helper::newuuid());
     //************************************************************
+
     logpath=(char*)malloc(sizeof(char)*1024);
     Helper::getLogPath(logpath);
     QString log;
@@ -356,7 +360,7 @@ MainWindow::~MainWindow()
 void MainWindow::on_pushButton_clicked()
 {
 
-    QTcpSocket* tempSocket;
+    QTcpSocket* tempSocket=NULL;
     for (int i=0;i<clientSize;i++)
     {
         if(clients[i].username==ui->textEdit_3->toPlainText().toStdString())
@@ -450,4 +454,5 @@ void MainWindow::closeEvent(QCloseEvent *event)
     QString log;
     QTextStream(&log)<<"Server stop @"<<Helper::getDateTime();
     Helper::log(log.toStdString().c_str(),logpath);
+    event->accept();
 }

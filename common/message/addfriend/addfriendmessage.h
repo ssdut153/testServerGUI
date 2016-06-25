@@ -15,7 +15,7 @@
  ****************************************************************************************/
 #ifndef ADDFRIENDMESSAGE_H
 #define ADDFRIENDMESSAGE_H
-#include "./base/message.h"
+#include "../base/message.h"
 
 class addFriendMessage : public Message
 {

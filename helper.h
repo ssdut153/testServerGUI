@@ -31,6 +31,7 @@ public:
     static const char* getLogFileName(char* logPath);
     static bool log(const char* logText,char* logPath);
     static void getLogPath(char* logPath);
+    static QString newuuid();
 };
 
 #endif // HELPER_H

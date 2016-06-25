@@ -41,8 +41,10 @@ std::string friendListMessage::getJsonString()
     cJSON *root, **dir;
     char *out;
     dir = (cJSON**)malloc(sizeof(cJSON*)*size);
+
     //创建json数组型结构体
     root = cJSON_CreateArray();
+    //cJSON_AddStringToObject(root,"head",head.c_str());
     for (int i = 0; i < size; i++)
     {
         //创建对象至数组
