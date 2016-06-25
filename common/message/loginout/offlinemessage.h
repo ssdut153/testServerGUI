@@ -2,27 +2,25 @@
  *  Copyright(c) 2016 Yang Zhizhuang (Software School of Dalian University of Technology)
  *  All rights reserved.
  *
- *  文件名称: myclient.cpp
+ *  文件名称: offlinemessage.h
  *  简要描述:
  *
- *  创建日期: 2016-6-22
- *  作者: Yang Zhizhuang
+ *  创建日期:
+ *  作者:
  *  说明:
  *
  *  修改日期:
  *  作者:
  *  说明:
  ****************************************************************************************/
-#include "myclient.h"
-/**
- * @brief MyClient::MyClient
- * @param user 用户名
- * @param clientConnection QTcpSocket*
- * @param i index
- */
-MyClient::MyClient(std::string user,QTcpSocket *clientConnection,int i)
+#ifndef OFFLINEMESSAGE_H
+#define OFFLINEMESSAGE_H
+#include "../base/message.h"
+
+class offlineMessage : public Message
 {
-    username=user;
-    client=clientConnection;
-    index=i;
-}
+public:
+    offlineMessage();
+};
+
+#endif // OFFLINEMESSAGE_H

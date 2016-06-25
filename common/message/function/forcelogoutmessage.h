@@ -2,26 +2,25 @@
  *  Copyright(c) 2016 Yang Zhizhuang (Software School of Dalian University of Technology)
  *  All rights reserved.
  *
- *  文件名称: friendlistmessage.h
+ *  文件名称: forcelogoutmessage.h
  *  简要描述:
  *
- *  创建日期: 2016-6-24
- *  作者: Yang Zhizhuang
+ *  创建日期:
+ *  作者:
  *  说明:
  *
  *  修改日期:
  *  作者:
  *  说明:
  ****************************************************************************************/
-#ifndef FRIENDLISTMESSAGE_H
-#define FRIENDLISTMESSAGE_H
-#include "./base/usernamemessage.h"
+#ifndef FORCELOGOUTMESSAGE_H
+#define FORCELOGOUTMESSAGE_H
+#include "../base/message.h"
 
-class friendListMessage : public usernameMessage
+class forceLogoutMessage : public Message
 {
 public:
-    friendListMessage();
-    friendListMessage(std::string username);
+    forceLogoutMessage();
 };
 
-#endif // FRIENDLISTMESSAGE_H
+#endif // FORCELOGOUTMESSAGE_H

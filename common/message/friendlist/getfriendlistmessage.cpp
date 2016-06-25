@@ -2,7 +2,7 @@
  *  Copyright(c) 2016 Yang Zhizhuang (Software School of Dalian University of Technology)
  *  All rights reserved.
  *
- *  文件名称: friendlistmessage.cpp
+ *  文件名称: getgetFriendListMessage.cpp
  *  简要描述:
  *
  *  创建日期: 2016-6-24
@@ -13,21 +13,21 @@
  *  作者:
  *  说明:
  ****************************************************************************************/
-#include "friendlistmessage.h"
-#include "../cJSON.h"
+#include "getFriendListMessage.h"
+#include "../../cJSON.h"
 /**
- * @brief friendListMessage::friendListMessage
+ * @brief getFriendListMessage::getFriendListMessage
  * @param username 用户名
  */
-friendListMessage::friendListMessage(std::string username)
+getFriendListMessage::getFriendListMessage(std::string username)
 {
     user=username;
-    head="friendList";
+    head="getFriendList";
 }
 /**
- * @brief friendListMessage::friendListMessage
+ * @brief getFriendListMessage::getFriendListMessage
  */
-friendListMessage::friendListMessage()
+getFriendListMessage::getFriendListMessage()
 {
-    head="friendList";
+    head="getFriendList";
 }

@@ -19,7 +19,7 @@
  */
 Message::Message()
 {
-    head="";
+    head="default";
 }
 /**
  * @brief Message::Message

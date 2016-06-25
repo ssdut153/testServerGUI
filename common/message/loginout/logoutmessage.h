@@ -2,25 +2,26 @@
  *  Copyright(c) 2016 Yang Zhizhuang (Software School of Dalian University of Technology)
  *  All rights reserved.
  *
- *  文件名称: connectokmessage.h
+ *  文件名称: logoutmessage.h
  *  简要描述:
  *
- *  创建日期:
- *  作者:
+ *  创建日期: 2016-6-23
+ *  作者: Yang Zhizhuang
  *  说明:
  *
  *  修改日期:
  *  作者:
  *  说明:
  ****************************************************************************************/
-#ifndef CONNECTOKMESSAGE_H
-#define CONNECTOKMESSAGE_H
-#include "./base/message.h"
+#ifndef LOGOUTMESSAGE_H
+#define LOGOUTMESSAGE_H
+#include "../base/usernamemessage.h"
 
-class connectOkMessage : public Message
+class logoutMessage : public usernameMessage
 {
 public:
-    connectOkMessage();
+    logoutMessage();
+    logoutMessage(std::string username);
 };
 
-#endif // CONNECTOKMESSAGE_H
+#endif // LOGOUTMESSAGE_H

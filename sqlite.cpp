@@ -63,14 +63,17 @@ bool Sqlite::sendfriendlist(const char* username,QTcpSocket* client)
         return false;
     startSendListMessage startsendlistmessage;
     client->write(startsendlistmessage.getJsonString().c_str());
+    client->waitForBytesWritten();
+    friendListMessage friendlistmessage;
     while(query.next())//query.next()指向查找到的第一条记录，然后每次后移一条记录
     {
         QString ele0=query.value(0).toString();//query.value(0)是id的值，将其转换为int型
-        friendListMessage friendlistmessage(ele0.toStdString());
-        client->write(friendlistmessage.getJsonString().c_str());
+        friendlistmessage.adduser(ele0.toStdString());
     }
-    endSendListMessage endsendlistmessage;
-    client->write(endsendlistmessage.getJsonString().c_str());
+    client->write(friendlistmessage.getJsonString().c_str());
+    //client->waitForBytesWritten();
+    //endSendListMessage endsendlistmessage;
+    //client->write(endsendlistmessage.getJsonString().c_str());
     return true;
 }
 /**

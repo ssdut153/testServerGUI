@@ -2,25 +2,26 @@
  *  Copyright(c) 2016 Yang Zhizhuang (Software School of Dalian University of Technology)
  *  All rights reserved.
  *
- *  文件名称: userinfomessage.h
+ *  文件名称: loginmessage.h
  *  简要描述:
  *
- *  创建日期:
- *  作者:
+ *  创建日期: 2016-6-22
+ *  作者: Yang Zhizhuang
  *  说明:
  *
  *  修改日期:
  *  作者:
  *  说明:
  ****************************************************************************************/
-#ifndef USERINFOMESSAGE_H
-#define USERINFOMESSAGE_H
-#include "./base/message.h"
+#ifndef LOGINMESSAGE_H
+#define LOGINMESSAGE_H
+#include "../base/upmessage.h"
 
-class userInfoMessage : public Message
+class loginMessage:public upMessage
 {
 public:
-    userInfoMessage();
+    loginMessage();
+    loginMessage(std::string username,std::string password);
 };
 
-#endif // USERINFOMESSAGE_H
+#endif // LOGINMESSAGE_H

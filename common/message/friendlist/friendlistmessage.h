@@ -2,10 +2,10 @@
  *  Copyright(c) 2016 Yang Zhizhuang (Software School of Dalian University of Technology)
  *  All rights reserved.
  *
- *  文件名称: loginfeedbackmessage.h
+ *  文件名称: friendlistmessage.h
  *  简要描述:
  *
- *  创建日期: 2016-6-22
+ *  创建日期: 2016-6-24
  *  作者: Yang Zhizhuang
  *  说明:
  *
@@ -13,19 +13,19 @@
  *  作者:
  *  说明:
  ****************************************************************************************/
-#ifndef LOGINFEEDBACKMESSAGE_H
-#define LOGINFEEDBACKMESSAGE_H
-#include "./base/message.h"
-
-class loginFeedBackMessage : public Message
+#ifndef FRIENDLISTMESSAGE_H
+#define FRIENDLISTMESSAGE_H
+#include "../base/usernamemessage.h"
+#include <vector>
+class friendListMessage : public Message
 {
 public:
-    loginFeedBackMessage();
-    loginFeedBackMessage(std::string username,std::string status);
+    friendListMessage();
+    void adduser(std::string username);
     std::string getJsonString();
     bool loadfromJson(std::string textJson);
-    std::string user;
-    std::string stat;
+    std::vector<std::string> user;
+    int size;
 };
 
-#endif // LOGINFEEDBACKMESSAGE_H
+#endif // FRIENDLISTMESSAGE_H

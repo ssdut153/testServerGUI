@@ -2,32 +2,34 @@
  *  Copyright(c) 2016 Yang Zhizhuang (Software School of Dalian University of Technology)
  *  All rights reserved.
  *
- *  文件名称: logoutmessage.cpp
+ *  文件名称: loginmessage.cpp
  *  简要描述:
  *
- *  创建日期:
- *  作者:
+ *  创建日期: 2016-6-22
+ *  作者: Yang Zhizhuang
  *  说明:
  *
  *  修改日期:
  *  作者:
  *  说明:
  ****************************************************************************************/
-#include "logoutmessage.h"
-#include "../cJSON.h"
+#include "loginmessage.h"
+#include "../../cJSON.h"
 /**
- * @brief logoutMessage::logoutMessage
+ * @brief loginMessage::loginMessage
  * @param username 用户名
+ * @param password 密码
  */
-logoutMessage::logoutMessage(std::string username)
+loginMessage::loginMessage(std::string username,std::string password)
 {
     user=username;
-    head="logout";
+    pass=password;
+    head="login";
 }
 /**
- * @brief logoutMessage::logoutMessage
+ * @brief loginMessage::loginMessage
  */
-logoutMessage::logoutMessage()
+loginMessage::loginMessage()
 {
-    head="logout";
+    head="login";
 }

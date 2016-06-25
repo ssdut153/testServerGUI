@@ -2,27 +2,32 @@
  *  Copyright(c) 2016 Yang Zhizhuang (Software School of Dalian University of Technology)
  *  All rights reserved.
  *
- *  文件名称: myclient.cpp
+ *  文件名称: logoutmessage.cpp
  *  简要描述:
  *
- *  创建日期: 2016-6-22
- *  作者: Yang Zhizhuang
+ *  创建日期:
+ *  作者:
  *  说明:
  *
  *  修改日期:
  *  作者:
  *  说明:
  ****************************************************************************************/
-#include "myclient.h"
+#include "logoutmessage.h"
+#include "../../cJSON.h"
 /**
- * @brief MyClient::MyClient
- * @param user 用户名
- * @param clientConnection QTcpSocket*
- * @param i index
+ * @brief logoutMessage::logoutMessage
+ * @param username 用户名
  */
-MyClient::MyClient(std::string user,QTcpSocket *clientConnection,int i)
+logoutMessage::logoutMessage(std::string username)
 {
-    username=user;
-    client=clientConnection;
-    index=i;
+    user=username;
+    head="logout";
+}
+/**
+ * @brief logoutMessage::logoutMessage
+ */
+logoutMessage::logoutMessage()
+{
+    head="logout";
 }

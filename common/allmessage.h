@@ -17,36 +17,36 @@
 #define ALLMESSAGE_H
 
 
-#include "message/loginmessage.h"           //  2016-6-22
-#include "message/loginfeedbackmessage.h"   //  2016-6-22
-#include "message/logoutmessage.h"
+#include "message/loginout/loginmessage.h"           //  2016-6-22
+#include "message/loginout/loginfeedbackmessage.h"   //  2016-6-22
+#include "message/loginout/logoutmessage.h"
 
-#include "message/regusermessage.h"         //  2016-6-23
-#include "message/regfeedbackmessage.h"     //  2016-6-23
+#include "message/reg/regusermessage.h"         //  2016-6-23
+#include "message/reg/regfeedbackmessage.h"     //  2016-6-23
 
-#include "message/getfriendlistmessage.h"   //  2016-6-24
-#include "message/startsendlistmessage.h"   //  2016-6-24
-#include "message/friendlistmessage.h"      //  2016-6-24
-#include "message/endsendlistmessage.h"     //  2016-6-24
+#include "message/friendlist/getfriendlistmessage.h"   //  2016-6-24
+#include "message/friendlist/startsendlistmessage.h"   //  2016-6-24
+#include "message/friendlist/friendlistmessage.h"      //  2016-6-24
+#include "message/friendlist/endsendlistmessage.h"     //  2016-6-24
 
-//#include "message/searchusermessage.h"
-//#include "message/userinfomessage.h"
+//#include "message/searchuser/searchusermessage.h"
+//#include "message/searchuser/userinfomessage.h"
 
-//#include "message/addfriendmessage.h"
-//#include "message/newfriendmessage.h"
-//#include "message/requestfriendmessage.h"
-//#include "message/ajfriendmessage.h"
+//#include "message/addfriend/addfriendmessage.h"
+//#include "message/addfriend/newfriendmessage.h"
+//#include "message/addfriend/requestfriendmessage.h"
+//#include "message/addfriend/ajfriendmessage.h"
 
-//#include "message/p2pmessage.h"
+//#include "message/function/p2pmessage.h"
 
-//#include "message/onlinemessage.h"
-//#include "message/offlinemessage.h"
+//#include "message/loginout/onlinemessage.h"
+//#include "message/loginout/offlinemessage.h"
 
-//#include "message/forcelogoutmessage.h"
-//#include "message/forcereloginmessage.h"
+//#include "message/function/forcelogoutmessage.h"
+//#include "message/function/forcereloginmessage.h"
 
-//#include "message/connecttestmessage.h"
-//#include "message/connectokmessage.h"
+//#include "message/function/connecttestmessage.h"
+//#include "message/function/connectokmessage.h"
 
 
 #endif // ALLMESSAGE_H

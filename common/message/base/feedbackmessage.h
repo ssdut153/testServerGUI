@@ -2,10 +2,10 @@
  *  Copyright(c) 2016 Yang Zhizhuang (Software School of Dalian University of Technology)
  *  All rights reserved.
  *
- *  文件名称: regusermessage.h
+ *  文件名称: feedbackmessage.h
  *  简要描述:
  *
- *  创建日期: 2016-6-23
+ *  创建日期: 2016-6-25
  *  作者: Yang Zhizhuang
  *  说明:
  *
@@ -13,19 +13,19 @@
  *  作者:
  *  说明:
  ****************************************************************************************/
-#ifndef REGUSERMESSAGE_H
-#define REGUSERMESSAGE_H
-#include "./base/message.h"
+#ifndef FEEDBACKMESSAGE_H
+#define FEEDBACKMESSAGE_H
+#include "message.h"
 
-class regUserMessage : public Message
+class feedBackMessage : public Message
 {
 public:
-    regUserMessage();
-    regUserMessage(std::string username,std::string password);
+    feedBackMessage();
+    feedBackMessage(std::string username,std::string status);
     std::string getJsonString();
     bool loadfromJson(std::string textJson);
     std::string user;
-    std::string pass;
+    std::string stat;
 };
 
-#endif // REGUSERMESSAGE_H
+#endif // FEEDBACKMESSAGE_H

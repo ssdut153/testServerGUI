@@ -2,10 +2,10 @@
  *  Copyright(c) 2016 Yang Zhizhuang (Software School of Dalian University of Technology)
  *  All rights reserved.
  *
- *  文件名称: endsendlistmessage.h
+ *  文件名称: loginfeedbackmessage.h
  *  简要描述:
  *
- *  创建日期: 2016-6-24
+ *  创建日期: 2016-6-22
  *  作者: Yang Zhizhuang
  *  说明:
  *
@@ -13,14 +13,15 @@
  *  作者:
  *  说明:
  ****************************************************************************************/
-#ifndef ENDSENDLISTMESSAGE_H
-#define ENDSENDLISTMESSAGE_H
-#include "./base/requestmessage.h"
+#ifndef LOGINFEEDBACKMESSAGE_H
+#define LOGINFEEDBACKMESSAGE_H
+#include "../base/feedbackmessage.h"
 
-class endSendListMessage : public requestMessage
+class loginFeedBackMessage : public feedBackMessage
 {
 public:
-    endSendListMessage();
+    loginFeedBackMessage();
+    loginFeedBackMessage(std::string username,std::string status);
 };
 
-#endif // ENDSENDLISTMESSAGE_H
+#endif // LOGINFEEDBACKMESSAGE_H

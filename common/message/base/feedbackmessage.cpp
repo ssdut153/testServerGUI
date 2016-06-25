@@ -2,10 +2,10 @@
  *  Copyright(c) 2016 Yang Zhizhuang (Software School of Dalian University of Technology)
  *  All rights reserved.
  *
- *  文件名称: regfeedbackmessage.cpp
+ *  文件名称: feedbackmessage.h
  *  简要描述:
  *
- *  创建日期: 2016-6-23
+ *  创建日期: 2016-6-25
  *  作者: Yang Zhizhuang
  *  说明:
  *
@@ -13,31 +13,31 @@
  *  作者:
  *  说明:
  ****************************************************************************************/
-#include "regfeedbackmessage.h"
-#include "../cJSON.h"
+#include "feedbackmessage.h"
+#include "../../cJSON.h"
 /**
- * @brief regFeedBackMessage::regFeedBackMessage
+ * @brief feedBackMessage::feedBackMessage
  * @param username 用户名
  * @param status 状态
  */
-regFeedBackMessage::regFeedBackMessage(std::string username,std::string status)
+feedBackMessage::feedBackMessage(std::string username,std::string status)
 {
     user=username;
     stat=status;
-    head="regFeedBack";
+    head="defaultFeedBack";
 }
 /**
- * @brief regFeedBackMessage::regFeedBackMessage
+ * @brief feedBackMessage::feedBackMessage
  */
-regFeedBackMessage::regFeedBackMessage()
+feedBackMessage::feedBackMessage()
 {
-    head="regFeedBack";
+    head="defauleFeedBack";
 }
 /**
- * @brief regFeedBackMessage::getJsonString
- * @return  对应的单行Json字符串
+ * @brief feedBackMessage::getJsonString
+ * @return std::string 对应的单行Json字符串
  */
-std::string regFeedBackMessage::getJsonString()
+std::string feedBackMessage::getJsonString()
 {
     // 创建JSON Object
     cJSON *root = cJSON_CreateObject();
@@ -54,11 +54,11 @@ std::string regFeedBackMessage::getJsonString()
     return temp;
 }
 /**
- * @brief regFeedBackMessage::loadfromJson
+ * @brief feedBackMessage::loadfromJson
  * @param textJson Json字符串
- * @return  bool 是否载入成功
+ * @return bool 是否载入成功
  */
-bool regFeedBackMessage::loadfromJson(std::string textJson)
+bool feedBackMessage::loadfromJson(std::string textJson)
 {
     cJSON *json , *json_username , *json_password;
     // 解析数据包

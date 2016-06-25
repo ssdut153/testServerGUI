@@ -2,7 +2,7 @@
  *  Copyright(c) 2016 Yang Zhizhuang (Software School of Dalian University of Technology)
  *  All rights reserved.
  *
- *  文件名称: offlinemessage.h
+ *  文件名称: p2pmessage.h
  *  简要描述:
  *
  *  创建日期:
@@ -13,14 +13,14 @@
  *  作者:
  *  说明:
  ****************************************************************************************/
-#ifndef OFFLINEMESSAGE_H
-#define OFFLINEMESSAGE_H
-#include "./base/message.h"
+#ifndef P2PMESSAGE_H
+#define P2PMESSAGE_H
+#include "../base/message.h"
 
-class offlineMessage : public Message
+class p2pMessage : public Message
 {
 public:
-    offlineMessage();
+    p2pMessage();
 };
 
-#endif // OFFLINEMESSAGE_H
+#endif // P2PMESSAGE_H

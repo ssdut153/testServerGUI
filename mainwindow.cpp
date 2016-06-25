@@ -323,14 +323,13 @@ MainWindow::MainWindow(QWidget *parent) :
     testload.loadfromJson(tempjson);
     ui->textEdit->append(QString::fromStdString(testload.head));
 *//*
-    friendListMessage test("testuser");
-    std::string tempjson=test.getJsonString();
-    ui->textEdit->append(QString::fromStdString(tempjson));
+    std::string tempjson("[{\"username\":\"testuser3\"},{\"username\":\"testuser2\"},{\"username\":\"testuser4\"}]");
 
     friendListMessage testload;
     testload.loadfromJson(tempjson);
-    ui->textEdit->append(QString::fromStdString(testload.user));
-    */
+    for(int i=0;i<testload.size;i++)
+        ui->textEdit->append(QString::fromStdString(testload.user[i]));
+*/
     //************************************************************
     logpath=(char*)malloc(sizeof(char)*1024);
     Helper::getLogPath(logpath);

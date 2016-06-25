@@ -2,7 +2,7 @@
  *  Copyright(c) 2016 Yang Zhizhuang (Software School of Dalian University of Technology)
  *  All rights reserved.
  *
- *  文件名称: logoutmessage.h
+ *  文件名称: regusermessage.h
  *  简要描述:
  *
  *  创建日期: 2016-6-23
@@ -13,15 +13,15 @@
  *  作者:
  *  说明:
  ****************************************************************************************/
-#ifndef LOGOUTMESSAGE_H
-#define LOGOUTMESSAGE_H
-#include "./base/usernamemessage.h"
+#ifndef REGUSERMESSAGE_H
+#define REGUSERMESSAGE_H
+#include "../base/upmessage.h"
 
-class logoutMessage : public usernameMessage
+class regUserMessage : public upMessage
 {
 public:
-    logoutMessage();
-    logoutMessage(std::string username);
+    regUserMessage();
+    regUserMessage(std::string username,std::string password);
 };
 
-#endif // LOGOUTMESSAGE_H
+#endif // REGUSERMESSAGE_H
