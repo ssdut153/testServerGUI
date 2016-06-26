@@ -18,6 +18,7 @@
 #include "./common/allmessage.h"
 #include <iostream>
 #include <string>
+//insert into testuser2 (username,status) values('testuser1',1)
 /**
  * @brief Sqlite::Sqlite
  */
@@ -36,6 +37,20 @@ Sqlite::~Sqlite()
 {
     dbconn.close();
 }
+bool Sqlite::isfriend(const char* username,const char* tocheckuser)
+{
+    QSqlQuery query;
+    QString u=username;
+    QString t=tocheckuser;
+    QString sqltext="select * from "+u+" where username='"+t+"'";
+    if(!query.exec(sqltext))
+        return false;
+    if(query.next())
+        return true;
+    else
+        return false;
+}
+
 /**
  * @brief Sqlite::queryexec
  * @param sqltext sql语句

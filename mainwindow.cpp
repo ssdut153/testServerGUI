@@ -232,6 +232,72 @@ void MainWindow::readClient(int ind)
             }
             return;
         }
+        else if(head=="p2p")
+        {
+            QString log;
+            p2pMessage p2pmessage;
+            p2pmessage.loadfromJson(str.toStdString());
+            if(clients[i].username!=p2pmessage.FromUserName)
+            {
+                feedBackMessage sendfailmessage(p2pmessage.ToUserName,"sendfail");
+                tempSocket->write(sendfailmessage.getJsonString().c_str());
+                QTextStream(&log)<<p2pmessage.FromUserName.c_str()<<" to "<<p2pmessage.ToUserName.c_str()<<" not same user @"<<p2pmessage.CreateTime.c_str();
+                if(Helper::log(log.toStdString().c_str(),logpath))
+                    ui->textEdit->append(log);
+                else
+                {
+                    QTextStream(&log)<<" log failed";
+                    ui->textEdit->append(log);
+                }
+                return;
+            }
+            if(!sqlite->isfriend(p2pmessage.ToUserName.c_str(),p2pmessage.FromUserName.c_str()))
+            {
+                feedBackMessage sendfailmessage(p2pmessage.ToUserName,"sendfail");
+                tempSocket->write(sendfailmessage.getJsonString().c_str());
+                QTextStream(&log)<<p2pmessage.FromUserName.c_str()<<" to "<<p2pmessage.ToUserName.c_str()<<" not friend @"<<p2pmessage.CreateTime.c_str();
+                if(Helper::log(log.toStdString().c_str(),logpath))
+                    ui->textEdit->append(log);
+                else
+                {
+                    QTextStream(&log)<<" log failed";
+                    ui->textEdit->append(log);
+                }
+                return;
+            }
+            QTcpSocket* tempSocket2=NULL;
+            bool flag=false;
+            for (int i=0;i<clientSize;i++)
+            {
+                if(clients[i].username==p2pmessage.ToUserName)
+                {
+                    tempSocket2=clients[i].client;
+                    flag=true;
+                    break;
+                }
+            }
+            if(flag)
+            {
+                tempSocket2->write(p2pmessage.getJsonString().c_str());
+                feedBackMessage sendsuccessmessage(p2pmessage.ToUserName,"sendsuccess");
+                tempSocket->write(sendsuccessmessage.getJsonString().c_str());
+                QTextStream(&log)<<p2pmessage.FromUserName.c_str()<<" to "<<p2pmessage.ToUserName.c_str()<<" send success @"<<p2pmessage.CreateTime.c_str();
+            }
+            else
+            {
+                feedBackMessage sendfailmessage(p2pmessage.ToUserName,"sendfail");
+                tempSocket->write(sendfailmessage.getJsonString().c_str());
+                QTextStream(&log)<<p2pmessage.FromUserName.c_str()<<" to "<<p2pmessage.ToUserName.c_str()<<" send fail @"<<p2pmessage.CreateTime.c_str();
+            }
+            if(Helper::log(log.toStdString().c_str(),logpath))
+                ui->textEdit->append(log);
+            else
+            {
+                QTextStream(&log)<<" log failed";
+                ui->textEdit->append(log);
+            }
+            return;
+        }
         else
         {
             QString log;
@@ -253,6 +319,7 @@ void MainWindow::readClient(int ind)
 //{"head":"login","username":"testuser88","password":"testuser"}
 //{"head":"logout","username":"testuser88"}
 //{"head":"regUser","username":"testuser","password":"testuser"}
+//{"head":"p2p","fromusername":"testuser1","tousername":"testuser2","createtime":"2016-6-26 20:9:35","content":"hello"}
 
 //create table users(uid integer primary key autoincrement,username varchar(20) UNIQUE,salt varchar(10),password varchar(70),regdate datetime,ip varchar(20),logindate datetime,vip int)
 /**
@@ -333,6 +400,19 @@ MainWindow::MainWindow(QWidget *parent) :
 */
     //  UUID
     //ui->textEdit->append(Helper::newuuid());
+    /*
+    p2pMessage test("testuser1","testuser2","hello");
+    std::string tempjson=test.getJsonString();
+    ui->textEdit->append(QString::fromStdString(tempjson));
+
+    p2pMessage testload;
+    testload.loadfromJson(tempjson);
+    ui->textEdit->append(QString::fromStdString(testload.head));
+    ui->textEdit->append(QString::fromStdString(testload.FromUserName));
+    ui->textEdit->append(QString::fromStdString(testload.ToUserName));
+    ui->textEdit->append(QString::fromStdString(testload.CreateTime));
+    ui->textEdit->append(QString::fromStdString(testload.Content));
+    */
     //************************************************************
 
     logpath=(char*)malloc(sizeof(char)*1024);

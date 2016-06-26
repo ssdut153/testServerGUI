@@ -21,6 +21,13 @@ class p2pMessage : public Message
 {
 public:
     p2pMessage();
+    p2pMessage(std::string from,std::string to,std::string text);
+    std::string getJsonString();
+    bool loadfromJson(std::string textJson);
+    std::string FromUserName;
+    std::string ToUserName;
+    std::string CreateTime;
+    std::string Content;
 };
 
 #endif // P2PMESSAGE_H
