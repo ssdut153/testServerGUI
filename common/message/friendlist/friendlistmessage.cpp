@@ -19,9 +19,10 @@
  * @brief friendListMessage::friendListMessage
  * @param username 用户名
  */
-void friendListMessage::adduser(std::string username)
+void friendListMessage::adduser(std::string username,int status)
 {
     user.push_back(username);
+    stat.push_back(status);
     size++;
 }
 /**
@@ -51,6 +52,7 @@ std::string friendListMessage::getJsonString()
         cJSON_AddItemToArray(root, dir[i] = cJSON_CreateObject());
         //为对象添加字符串键值对
         cJSON_AddStringToObject(dir[i], "username", user[i].c_str());
+        cJSON_AddNumberToObject(dir[i],"status",stat[i]);
     }
     //将json结构体转换为字符串
     out = cJSON_PrintUnformatted(root);
@@ -67,7 +69,7 @@ std::string friendListMessage::getJsonString()
  */
 bool friendListMessage::loadfromJson(std::string textJson)
 {
-    cJSON * root = NULL, *item = NULL, *username;
+    cJSON * root = NULL, *item = NULL, *username, *status;
     char *pr = NULL;
     if ((root = cJSON_Parse(textJson.c_str())) == NULL)
         return false;
@@ -82,9 +84,11 @@ bool friendListMessage::loadfromJson(std::string textJson)
             continue;
         //将键值item从json节点中取出
         username = cJSON_GetObjectItem(item, "username");
+        status=cJSON_GetObjectItem(item,"status");
         //加入到题库结构体数组
         std::string temp(username->valuestring);
         user.push_back(temp);
+        stat.push_back(status->valueint);
     }
     cJSON_Delete(root);
     return true;

@@ -63,6 +63,40 @@ bool Sqlite::queryexec(const char* sqltext)
         return false;
     return true;
 }
+
+bool Sqlite::updatelogin(const char* username)
+{
+    QSqlQuery query;
+    QString u=username;
+    QString sqltext="update users set logindate='"+Helper::getDateTime()+"' where username='"+u+"'";
+    if(!query.exec(sqltext))
+        return false;
+    QString sqltext2="update users set online=1 where username='"+u+"'";
+    if(!query.exec(sqltext2))
+        return false;
+}
+bool Sqlite::updatelogout(const char* username)
+{
+    QSqlQuery query;
+    QString u=username;
+    QString sqltext2="update users set online=0 where username='"+u+"'";
+    if(!query.exec(sqltext2))
+        return false;
+}
+bool Sqlite::isonline(const char* username)
+{
+    QSqlQuery query;
+    QString u=username;
+    QString sqltext="select online from users where username='"+u+"'";
+    if(!query.exec(sqltext))
+        return false;
+    if(!query.next())
+        return false;
+    if(query.value(0).toInt()==1)
+        return true;
+    else
+        return false;
+}
 /**
  * @brief Sqlite::sendfriendlist
  * @param username 用户名
@@ -83,7 +117,7 @@ bool Sqlite::sendfriendlist(const char* username,QTcpSocket* client)
     while(query.next())//query.next()指向查找到的第一条记录，然后每次后移一条记录
     {
         QString ele0=query.value(0).toString();//query.value(0)是id的值，将其转换为int型
-        friendlistmessage.adduser(ele0.toStdString());
+        friendlistmessage.adduser(ele0.toStdString(),isonline(ele0.toStdString().c_str())?1:0);
     }
     client->write(friendlistmessage.getJsonString().c_str());
     //client->waitForBytesWritten();
@@ -132,7 +166,7 @@ bool Sqlite::reguser(const char* username,const char* password,const char* vip)/
     QString s=salt;
     QString v=vip;
     QString d=Helper::getDateTime();
-    QString sqltext="insert into users (username,password,salt,regdate,vip) values('"+u+"','"+p+"','"+s+"','"+d+"',"+v+")";
+    QString sqltext="insert into users (username,password,salt,regdate,vip,online) values('"+u+"','"+p+"','"+s+"','"+d+"',"+v+",0)";
     if(!query.exec(sqltext))
         return false;
     QString sqltext2="create table "+u+" (uid integer PRIMARY KEY autoincrement,username varchar(10) UNIQUE,status int)";

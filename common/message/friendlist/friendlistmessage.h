@@ -21,10 +21,11 @@ class friendListMessage : public Message
 {
 public:
     friendListMessage();
-    void adduser(std::string username);
+    void adduser(std::string username,int status);
     std::string getJsonString();
     bool loadfromJson(std::string textJson);
     std::vector<std::string> user;
+    std::vector<int> stat;
     int size;
 };
 

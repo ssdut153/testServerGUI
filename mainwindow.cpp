@@ -12,6 +12,9 @@
  *  修改日期:
  *  作者:
  *  说明:
+ *
+ *  已知问题：DLUT会把发送到客户端的聊天信息包过滤
+ *
  ****************************************************************************************/
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
@@ -85,7 +88,7 @@ QString login(std::string textJson,MyClient* socket,int ind)
         socket->username=loginmessage.user;
         socket->client->write(feedback.getJsonString().c_str());
         QTextStream(&res)<<loginmessage.user.c_str()<<" log in success @"<<Helper::getDateTime()<<" &scoketName:"<<QString::fromStdString(clients[ind].username);
-
+        sqlite->updatelogin(loginmessage.user.c_str());
         //  TODO：强制已在线同一用户名登出
     }
     else
@@ -150,7 +153,13 @@ QString getFriendList(std::string textJson,MyClient* socket)
  * @brief offline
  * @param username 用户名
  */
-std::string offline(std::string username){return username;}
+bool offline(std::string username)
+{
+    if(sqlite->updatelogout(username.c_str()))
+        return true;
+    else
+        return false;
+}
 /**
  * @brief MainWindow::readClient
  * SLOT:读取数据
@@ -267,18 +276,18 @@ void MainWindow::readClient(int ind)
             }
             QTcpSocket* tempSocket2=NULL;
             bool flag=false;
-            for (int i=0;i<clientSize;i++)
+            for (int j=0;i<clientSize;j++)
             {
-                if(clients[i].username==p2pmessage.ToUserName)
+                if(clients[j].username==p2pmessage.ToUserName)
                 {
-                    tempSocket2=clients[i].client;
+                    tempSocket2=clients[j].client;
                     flag=true;
                     break;
                 }
             }
             if(flag)
             {
-                tempSocket2->write(p2pmessage.getJsonString().c_str());
+                tempSocket2->write(str.toStdString().c_str());
                 feedBackMessage sendsuccessmessage(p2pmessage.ToUserName,"sendsuccess");
                 tempSocket->write(sendsuccessmessage.getJsonString().c_str());
                 QTextStream(&log)<<p2pmessage.FromUserName.c_str()<<" to "<<p2pmessage.ToUserName.c_str()<<" send success @"<<p2pmessage.CreateTime.c_str();
@@ -319,6 +328,7 @@ void MainWindow::readClient(int ind)
 //{"head":"login","username":"testuser88","password":"testuser"}
 //{"head":"logout","username":"testuser88"}
 //{"head":"regUser","username":"testuser","password":"testuser"}
+//{"head":"getFriendList","username":"testuser1"}
 //{"head":"p2p","fromusername":"testuser1","tousername":"testuser2","createtime":"2016-6-26 20:9:35","content":"hello"}
 
 //create table users(uid integer primary key autoincrement,username varchar(20) UNIQUE,salt varchar(10),password varchar(70),regdate datetime,ip varchar(20),logindate datetime,vip int)

@@ -30,6 +30,9 @@ public:
     char* select1(char* selecttext);
     bool sendfriendlist(const char* username,QTcpSocket* client);
     bool isfriend(const char* username,const char* tocheckuser);
+    bool updatelogin(const char* username);
+    bool updatelogout(const char* username);
+    bool isonline(const char* username);
 private:
     QSqlDatabase dbconn;
     QString regusersql="insert into users (username,password,salt,regdate,vip) values('?','?','?','?',?)";
