@@ -5,8 +5,8 @@
  *  文件名称: userinfomessage.h
  *  简要描述:
  *
- *  创建日期:
- *  作者:
+ *  创建日期: 2016-6-28
+ *  作者: 杨志庄
  *  说明:
  *
  *  修改日期:
@@ -15,12 +15,13 @@
  ****************************************************************************************/
 #ifndef USERINFOMESSAGE_H
 #define USERINFOMESSAGE_H
-#include "../base/message.h"
+#include "../base/feedbackmessage.h"
 
-class userInfoMessage : public Message
+class userInfoMessage : public feedBackMessage
 {
 public:
     userInfoMessage();
+    userInfoMessage(std::string username,std::string status);
 };
 
 #endif // USERINFOMESSAGE_H

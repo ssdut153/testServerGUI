@@ -243,6 +243,22 @@ void MainWindow::readClient(int ind)
             }
             return;
         }
+        else if(head=="searchUser")
+        {
+            searchUserMessage searchusermessage;
+            searchusermessage.loadfromJson(str.toStdString());
+            if(sqlite->isexist(searchusermessage.user.c_str()))
+            {
+                userInfoMessage userinfomessage(searchusermessage.user,"true");
+                clients[i].client->write(userinfomessage.getJsonString().c_str());
+            }
+            else
+            {
+                userInfoMessage userinfomessage(searchusermessage.user,"false");
+                clients[i].client->write(userinfomessage.getJsonString().c_str());
+            }
+            return;
+        }
         else if(head=="regUser")
         {
             QString log=regUser(str.toStdString(),&clients[i]);

@@ -159,6 +159,17 @@ bool Sqlite::sendtofriends(const char* username,bool online,std::vector<MyClient
 
     return true;
 }
+bool Sqlite::isexist(const char* username)
+{
+    QSqlQuery query;
+    QString u=username;
+    QString sqltext="select * from users where username='"+u+"'";
+    if(!query.exec(sqltext))
+        return false;
+    if(!query.next())
+        return false;
+    return true;
+}
 
 /**
  * @brief Sqlite::sendfriendlist

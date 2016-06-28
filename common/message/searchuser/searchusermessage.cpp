@@ -17,5 +17,11 @@
 
 searchUserMessage::searchUserMessage()
 {
+    head="searchUser";
+}
 
+searchUserMessage::searchUserMessage(std::string username)
+{
+    user=username;
+    head="searchUser";
 }

@@ -15,12 +15,13 @@
  ****************************************************************************************/
 #ifndef SEARCHUSERMESSAGE_H
 #define SEARCHUSERMESSAGE_H
-#include "../base/message.h"
+#include "../base/usernamemessage.h"
 
-class searchUserMessage : public Message
+class searchUserMessage : public usernameMessage
 {
 public:
     searchUserMessage();
+    searchUserMessage(std::string username);
 };
 
 #endif // SEARCHUSERMESSAGE_H

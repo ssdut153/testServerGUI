@@ -38,6 +38,7 @@ public:
     bool sendtofriends(const char* username,bool online,std::vector<MyClient>& clients,int size);
     bool inital();
     bool login(const char* username,QString ip);
+    bool isexist(const char* username);
 private:
     QSqlDatabase dbconn;
     QString regusersql="insert into users (username,password,salt,regdate,vip) values('?','?','?','?',?)";

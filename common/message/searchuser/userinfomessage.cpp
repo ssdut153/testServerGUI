@@ -5,8 +5,8 @@
  *  文件名称: userinfomessage.cpp
  *  简要描述:
  *
- *  创建日期:
- *  作者:
+ *  创建日期: 2016-6-28
+ *  作者: 杨志庄
  *  说明:
  *
  *  修改日期:
@@ -17,5 +17,12 @@
 
 userInfoMessage::userInfoMessage()
 {
+    head="userInfo";
+}
 
+userInfoMessage::userInfoMessage(std::string username,std::string status)
+{
+    user=username;
+    stat=status;
+    head="userInfo";
 }
