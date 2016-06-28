@@ -21,6 +21,7 @@
 #include <QtNetwork>
 #include <vector>
 #include "myclient.h"
+#include "../common/message/addfriend/ajfriendmessage.h"
 class Sqlite
 {
 public:
@@ -39,6 +40,8 @@ public:
     bool inital();
     bool login(const char* username,QString ip);
     bool isexist(const char* username);
+    bool addfriend(const char* fromusername,const char* tousername);
+    bool ajfriend(ajFriendMessage& ajfriendmessage);
 private:
     QSqlDatabase dbconn;
     QString regusersql="insert into users (username,password,salt,regdate,vip) values('?','?','?','?',?)";

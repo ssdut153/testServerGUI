@@ -15,12 +15,13 @@
  ****************************************************************************************/
 #ifndef NEWFRIENDMESSAGE_H
 #define NEWFRIENDMESSAGE_H
-#include "../base/message.h"
+#include "../base/usernamemessage.h"
 
-class newFriendMessage : public Message
+class newFriendMessage : public usernameMessage
 {
 public:
     newFriendMessage();
+    newFriendMessage(std::string username);
 };
 
 #endif // NEWFRIENDMESSAGE_H

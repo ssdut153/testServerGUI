@@ -15,13 +15,13 @@
  ****************************************************************************************/
 #ifndef REQUESTFRIENDMESSAGE_H
 #define REQUESTFRIENDMESSAGE_H
-#include "../base/message.h"
+#include "../base/uumessage.h"
 
-class requestFriendMessage : public Message
+class requestFriendMessage : public uuMessage
 {
 public:
     requestFriendMessage();
-
+    requestFriendMessage(std::string fromUserName,std::string toUserName);
 };
 
 #endif // REQUESTFRIENDMESSAGE_H

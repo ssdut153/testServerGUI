@@ -17,5 +17,11 @@
 
 addFriendMessage::addFriendMessage()
 {
-
+    head="addFriend";
+}
+addFriendMessage::addFriendMessage(std::string fromUserName,std::string toUserName)
+{
+    fromuser=fromUserName;
+    touser=toUserName;
+    head="addFriend";
 }

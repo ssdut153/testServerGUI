@@ -17,5 +17,11 @@
 
 requestFriendMessage::requestFriendMessage()
 {
-
+    head="requestFriend";
+}
+requestFriendMessage::requestFriendMessage(std::string fromUserName,std::string toUserName)
+{
+    fromuser=fromUserName;
+    touser=toUserName;
+    head="requestFriend";
 }

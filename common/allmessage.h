@@ -32,10 +32,13 @@
 #include "message/searchuser/searchusermessage.h"      //  2016-6-28
 #include "message/searchuser/userinfomessage.h"        //  2016-6-28
 
-//#include "message/addfriend/addfriendmessage.h"
-//#include "message/addfriend/newfriendmessage.h"
-//#include "message/addfriend/requestfriendmessage.h"
-//#include "message/addfriend/ajfriendmessage.h"
+#include "message/addfriend/addfriendmessage.h"        //  2016-6-28
+//成功添加新好友
+#include "message/addfriend/newfriendmessage.h"        //  2016-6-28
+//客户端接收新好友请求
+#include "message/addfriend/requestfriendmessage.h"    //  2016-6-28
+//发送是否同意好友请求
+#include "message/addfriend/ajfriendmessage.h"         //  2016-6-28
 
 #include "message/function/p2pmessage.h"              //  2016-6-26
 

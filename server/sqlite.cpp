@@ -37,6 +37,51 @@ Sqlite::~Sqlite()
 {
     dbconn.close();
 }
+bool Sqlite::ajfriend(ajFriendMessage& ajfriendmessage)
+{
+    if(ajfriendmessage.acpt=="true")
+    {
+        QSqlQuery query;
+        QString u=QString::fromStdString(ajfriendmessage.fromuser);
+        QString t=QString::fromStdString(ajfriendmessage.touser);
+        QString sqltext="update "+u+" set status=1 where username='"+t+"'";
+        if(!query.exec(sqltext))
+            return false;
+        QString sqltext2="update "+t+" set status=1 where username='"+u+"'";
+        if(!query.exec(sqltext2))
+            return false;
+        //TODO:发送新好友通知
+        return true;
+    }
+    else
+    {
+        QSqlQuery query;
+        QString u=QString::fromStdString(ajfriendmessage.fromuser);
+        QString t=QString::fromStdString(ajfriendmessage.touser);
+        QString sqltext="delete from "+u+" where username='"+t+"'";
+        if(!query.exec(sqltext))
+            return false;
+        QString sqltext2="delete from "+t+" where username='"+u+"'";
+        if(!query.exec(sqltext2))
+            return false;
+        return true;
+    }
+}
+
+bool Sqlite::addfriend(const char* fromusername,const char* tousername)
+{
+    QSqlQuery query;
+    QString u=fromusername;
+    QString t=tousername;
+    QString sqltext="insert into "+t+" (username,status) values('"+u+"',0)";
+    if(!query.exec(sqltext))
+        return false;
+    QString sqltext2="insert into "+u+" (username,status) values('"+t+"',0)";
+    if(!query.exec(sqltext2))
+        return false;
+    return true;
+}
+
 bool Sqlite::isfriend(const char* username,const char* tocheckuser)
 {
     QSqlQuery query;
@@ -116,46 +161,46 @@ bool Sqlite::sendtofriends(const char* username,bool online,std::vector<MyClient
     if(!query.exec(sqltext))
         return false;
     //try{
-        while(query.next())//query.next()指向查找到的第一条记录，然后每次后移一条记录
+    while(query.next())//query.next()指向查找到的第一条记录，然后每次后移一条记录
+    {
+        QTcpSocket* tempSocket=NULL;
+        QString ele0=query.value(0).toString();
+        if(isonline(ele0.toStdString().c_str()))
         {
-            QTcpSocket* tempSocket=NULL;
-            QString ele0=query.value(0).toString();
-            if(isonline(ele0.toStdString().c_str()))
+            bool flag=false;
+            for(int i=0;i<size;i++)
             {
-                bool flag=false;
-                for(int i=0;i<size;i++)
+                if(clients[i].username==ele0.toStdString())
                 {
-                    if(clients[i].username==ele0.toStdString())
-                    {
-                        tempSocket=clients[i].client;
-                        flag=true;
-                        break;
-                    }
+                    tempSocket=clients[i].client;
+                    flag=true;
+                    break;
                 }
-                if(flag)
+            }
+            if(flag)
+            {
+                if(online)
                 {
-                    if(online)
-                    {
-                        onlineMessage onlinemessage(username);
-                        tempSocket->write(onlinemessage.getJsonString().c_str());
-                    }
-                    else
-                    {
-                        offlineMessage offlinemessage(username);
-                        tempSocket->write(offlinemessage.getJsonString().c_str());
-                    }
+                    onlineMessage onlinemessage(username);
+                    tempSocket->write(onlinemessage.getJsonString().c_str());
                 }
                 else
-                    continue;
+                {
+                    offlineMessage offlinemessage(username);
+                    tempSocket->write(offlinemessage.getJsonString().c_str());
+                }
             }
             else
                 continue;
         }
+        else
+            continue;
+    }
     //}
     //catch(...)
     //{
     //    return false;
-   // }
+    // }
 
     return true;
 }

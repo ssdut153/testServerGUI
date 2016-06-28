@@ -259,6 +259,49 @@ void MainWindow::readClient(int ind)
             }
             return;
         }
+        else if( head=="addFriend")
+        {
+            addFriendMessage addfriendmessage;
+            addfriendmessage.loadfromJson(str.toStdString());
+            //已经为好友或不是本人
+            if(clients[i].username!=addfriendmessage.fromuser||sqlite->isfriend(addfriendmessage.fromuser.c_str(),addfriendmessage.touser.c_str()))
+                return;
+            if(sqlite->addfriend(addfriendmessage.fromuser.c_str(),addfriendmessage.touser.c_str()))
+                if(sqlite->isonline(addfriendmessage.touser.c_str()))
+                {
+                    requestFriendMessage requestfriendmessage(addfriendmessage.fromuser,addfriendmessage.touser);
+                    for(int i=0;i<clientSize;i++)
+                        if(clients[i].username==addfriendmessage.touser)
+                        {
+                            clients[i].client->write(requestfriendmessage.getJsonString().c_str());
+                            return;
+                        }
+                }
+        }
+        else if(head=="ajFriend")
+        {
+            ajFriendMessage ajfriendmessage;
+            ajfriendmessage.loadfromJson(str.toStdString());
+            sqlite->ajfriend(ajfriendmessage);
+            if(ajfriendmessage.acpt=="true")
+            {
+                newFriendMessage newfriendmessage1(ajfriendmessage.fromuser);
+                clients[i].client->write(newfriendmessage1.getJsonString().c_str());
+                if(sqlite->isonline(ajfriendmessage.touser.c_str()))
+                {
+                    newFriendMessage newfriendmessage2(ajfriendmessage.touser);
+                    for (int j=0;j<clientSize;j++)
+                    {
+                        if(clients[j].username==ajfriendmessage.fromuser)
+                        {
+                            clients[j].client->write(newfriendmessage2.getJsonString().c_str());
+                            break;
+                        }
+                    }
+                }
+            }
+            return;
+        }
         else if(head=="regUser")
         {
             QString log=regUser(str.toStdString(),&clients[i]);
@@ -376,6 +419,7 @@ void MainWindow::readClient(int ind)
 //{"head":"regUser","username":"testuser","password":"testuser"}
 //{"head":"getFriendList","username":"testuser1"}
 //{"head":"p2p","fromusername":"testuser1","tousername":"testuser2","createtime":"2016-6-26 20:9:35","content":"hello"}
+//{"head":"addFriend","fromusername":"testuser1","tousername":"testuser2"}
 
 //create table users(uid integer primary key autoincrement,username varchar(20) UNIQUE,salt varchar(10),password varchar(70),regdate datetime,ip varchar(20),logindate datetime,vip int)
 /**
