@@ -14,8 +14,20 @@
  *  说明:
  ****************************************************************************************/
 #include "forcelogoutmessage.h"
-
+#include "../../cJSON.h"
+/**
+ * @brief forceLogoutMessage::forceLogoutMessage
+ * @param username 用户名
+ */
+forceLogoutMessage::forceLogoutMessage(std::string username)
+{
+    user=username;
+    head="forceLogout";
+}
+/**
+ * @brief forceLogoutMessage::forceLogoutMessage
+ */
 forceLogoutMessage::forceLogoutMessage()
 {
-
+    head="forceLogout";
 }

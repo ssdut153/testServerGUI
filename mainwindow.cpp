@@ -27,7 +27,7 @@
 #include "myclient.h"
 #include <vector>
 #include "common/allmessage.h"
-
+#include <QDebug>
 //#include <QMessageBox>
 //  TODO：增加日志写到文件的功能
 char* logpath;
@@ -84,12 +84,30 @@ QString login(std::string textJson,MyClient* socket,int ind)
 
     if(sqlite->checkpassword(loginmessage.user.c_str(),loginmessage.pass.c_str()))
     {
+        //  强制已在线同一用户名登出,使用forcelogoutmessage，先用ifonline判断是否在线，在线则迭代socket
+        if(sqlite->isonline(loginmessage.user.c_str()))
+        {
+            QTcpSocket* tempSocket=NULL;
+            for (int j=0;j<clientSize;j++)
+            {
+                if(clients[j].username==loginmessage.user)
+                {
+                    tempSocket=clients[j].client;
+                    clients[j].username="~logout";
+                    break;
+                }
+            }
+            forceLogoutMessage forcelogoutmessage(loginmessage.user.c_str());
+            tempSocket->write(forcelogoutmessage.getJsonString().c_str());
+        }
         loginFeedBackMessage feedback(loginmessage.user,"true");
         socket->username=loginmessage.user;
         socket->client->write(feedback.getJsonString().c_str());
         QTextStream(&res)<<loginmessage.user.c_str()<<" log in success @"<<Helper::getDateTime()<<" &scoketName:"<<QString::fromStdString(clients[ind].username);
         sqlite->updatelogin(loginmessage.user.c_str());
-        //  TODO：强制已在线同一用户名登出
+        sqlite->sendtofriends(loginmessage.user.c_str(),true,clients,clientSize);
+        sqlite->login(loginmessage.user.c_str(),socket->client->peerAddress().toString());
+
     }
     else
     {
@@ -155,6 +173,7 @@ QString getFriendList(std::string textJson,MyClient* socket)
  */
 bool offline(std::string username)
 {
+    sqlite->sendtofriends(username.c_str(),false,clients,clientSize);
     if(sqlite->updatelogout(username.c_str()))
         return true;
     else
@@ -196,6 +215,11 @@ void MainWindow::readClient(int ind)
             }
             return;
         }
+        else if(head=="connectTest")
+        {
+            connectOkMessage connectokmessage;
+            clients[i].client->write(connectokmessage.getJsonString().c_str());
+        }
         else if(head=="logout")
         {
             logoutMessage logoutmessage;
@@ -204,8 +228,10 @@ void MainWindow::readClient(int ind)
             QTextStream(&log)<<QString::fromStdString(logoutmessage.user)<<" log out @"<<Helper::getDateTime();
             offline(logoutmessage.user);
             //移除前要disconnect
+            //disconnect(clients[clientSize-1].client, SIGNAL(readyRead()), signalMapper, 0);
+            //clients[i].client->close();
             //clients[i].client=NULL;
-            //clients[i].username="~logout";
+            clients[i].username="~logout";
             //clients.erase(clients.begin()+i);
             //clientSize--;
             if(Helper::log(log.toStdString().c_str(),logpath))
@@ -246,6 +272,7 @@ void MainWindow::readClient(int ind)
             QString log;
             p2pMessage p2pmessage;
             p2pmessage.loadfromJson(str.toStdString());
+            //是否是本人发送
             if(clients[i].username!=p2pmessage.FromUserName)
             {
                 feedBackMessage sendfailmessage(p2pmessage.ToUserName,"sendfail");
@@ -260,6 +287,7 @@ void MainWindow::readClient(int ind)
                 }
                 return;
             }
+            //是否为好友
             if(!sqlite->isfriend(p2pmessage.ToUserName.c_str(),p2pmessage.FromUserName.c_str()))
             {
                 feedBackMessage sendfailmessage(p2pmessage.ToUserName,"sendfail");
@@ -275,20 +303,22 @@ void MainWindow::readClient(int ind)
                 return;
             }
             QTcpSocket* tempSocket2=NULL;
-            bool flag=false;
-            for (int j=0;i<clientSize;j++)
+            //是否在线
+            bool flag=sqlite->isonline(p2pmessage.ToUserName.c_str());
+            for (int j=0;j<clientSize;j++)
             {
                 if(clients[j].username==p2pmessage.ToUserName)
                 {
                     tempSocket2=clients[j].client;
-                    flag=true;
                     break;
                 }
             }
+            //ui->textEdit->append(flag?"true":"false");
             if(flag)
             {
-                tempSocket2->write(str.toStdString().c_str());
+                ui->textEdit->append(flag?"true":"false");
                 feedBackMessage sendsuccessmessage(p2pmessage.ToUserName,"sendsuccess");
+                tempSocket2->write(str.toStdString().c_str());
                 tempSocket->write(sendsuccessmessage.getJsonString().c_str());
                 QTextStream(&log)<<p2pmessage.FromUserName.c_str()<<" to "<<p2pmessage.ToUserName.c_str()<<" send success @"<<p2pmessage.CreateTime.c_str();
             }
@@ -347,8 +377,12 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(server, SIGNAL(newConnection()), this, SLOT(acceptConnection()));
     signalMapper = new QSignalMapper(this);
     //  初始化Sqlite类
-
+    QString log;
     sqlite=new Sqlite();
+    if(sqlite->inital())
+        QTextStream(&log)<<"inital "<<"success"<<"\n";
+    else
+        QTextStream(&log)<<"inital "<<"fail"<<"\n";
     /*
     loginMessage test("testuser","testpassword");
     std::string tempjson=test.getJsonString();
@@ -427,7 +461,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     logpath=(char*)malloc(sizeof(char)*1024);
     Helper::getLogPath(logpath);
-    QString log;
+
     QTextStream(&log)<<"Server start @"<<Helper::getDateTime();
     if(Helper::log(log.toStdString().c_str(),logpath))
         ui->textEdit->append(log);
@@ -518,6 +552,8 @@ void MainWindow::on_pushButton_4_clicked()
     ui->textEdit->append("Output start");
     for (int i=0;i<clientSize;i++)
     {
+        if(clients[i].username=="~logout")
+            continue;
         QString output;
         QTextStream(&output)
                 <<QString::fromStdString(clients[i].username)

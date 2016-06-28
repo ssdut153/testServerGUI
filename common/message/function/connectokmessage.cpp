@@ -17,5 +17,5 @@
 
 connectOkMessage::connectOkMessage()
 {
-
+    head="connectOK";
 }

@@ -5,8 +5,8 @@
  *  文件名称: offlinemessage.h
  *  简要描述:
  *
- *  创建日期:
- *  作者:
+ *  创建日期: 2016-6-28
+ *  作者: Yang Zhizhuang
  *  说明:
  *
  *  修改日期:
@@ -15,12 +15,13 @@
  ****************************************************************************************/
 #ifndef OFFLINEMESSAGE_H
 #define OFFLINEMESSAGE_H
-#include "../base/message.h"
+#include "../base/usernamemessage.h"
 
-class offlineMessage : public Message
+class offlineMessage : public usernameMessage
 {
 public:
     offlineMessage();
+    offlineMessage(std::string username);
 };
 
 #endif // OFFLINEMESSAGE_H

@@ -74,6 +74,7 @@ bool Sqlite::updatelogin(const char* username)
     QString sqltext2="update users set online=1 where username='"+u+"'";
     if(!query.exec(sqltext2))
         return false;
+    return true;
 }
 bool Sqlite::updatelogout(const char* username)
 {
@@ -82,6 +83,7 @@ bool Sqlite::updatelogout(const char* username)
     QString sqltext2="update users set online=0 where username='"+u+"'";
     if(!query.exec(sqltext2))
         return false;
+    return true;
 }
 bool Sqlite::isonline(const char* username)
 {
@@ -97,6 +99,67 @@ bool Sqlite::isonline(const char* username)
     else
         return false;
 }
+bool Sqlite::inital()
+{
+    QSqlQuery query;
+    QString sqltext="update users set online=0";
+    if(!query.exec(sqltext))
+        return false;
+    return true;
+}
+
+bool Sqlite::sendtofriends(const char* username,bool online,std::vector<MyClient>& clients,int size)
+{
+    QSqlQuery query;
+    QString u=username;
+    QString sqltext="select username from "+u+" where status=1";
+    if(!query.exec(sqltext))
+        return false;
+    //try{
+        while(query.next())//query.next()指向查找到的第一条记录，然后每次后移一条记录
+        {
+            QTcpSocket* tempSocket=NULL;
+            QString ele0=query.value(0).toString();
+            if(isonline(ele0.toStdString().c_str()))
+            {
+                bool flag=false;
+                for(int i=0;i<size;i++)
+                {
+                    if(clients[i].username==ele0.toStdString())
+                    {
+                        tempSocket=clients[i].client;
+                        flag=true;
+                        break;
+                    }
+                }
+                if(flag)
+                {
+                    if(online)
+                    {
+                        onlineMessage onlinemessage(username);
+                        tempSocket->write(onlinemessage.getJsonString().c_str());
+                    }
+                    else
+                    {
+                        offlineMessage offlinemessage(username);
+                        tempSocket->write(offlinemessage.getJsonString().c_str());
+                    }
+                }
+                else
+                    continue;
+            }
+            else
+                continue;
+        }
+    //}
+    //catch(...)
+    //{
+    //    return false;
+   // }
+
+    return true;
+}
+
 /**
  * @brief Sqlite::sendfriendlist
  * @param username 用户名
@@ -147,6 +210,17 @@ bool Sqlite::checkpassword(const char *username,const char *password)
     else
         return false;
 }
+bool Sqlite::login(const char* username,QString ip)
+{
+    QSqlQuery query;
+    QString u=username;
+    QString sqltext="update users set ip='"+ip+"' where username='"+u+"'";
+    if(!query.exec(sqltext))
+        return false;
+    else
+        return true;
+}
+
 /**
  * @brief Sqlite::reguser
  * @param username 用户名

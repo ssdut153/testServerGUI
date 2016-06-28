@@ -5,8 +5,8 @@
  *  文件名称: offlinemessage.cpp
  *  简要描述:
  *
- *  创建日期:
- *  作者:
+ *  创建日期: 2016-6-28
+ *  作者: Yang Zhizhuang
  *  说明:
  *
  *  修改日期:
@@ -14,8 +14,21 @@
  *  说明:
  ****************************************************************************************/
 #include "offlinemessage.h"
-
+#include "../../cJSON.h"
+/**
+ * @brief offlineMessage::offlineMessage
+ * @param username 用户名
+ */
+offlineMessage::offlineMessage(std::string username)
+{
+    user=username;
+    head="offline";
+}
+/**
+ * @brief offlineMessage::offlineMessage
+ */
 offlineMessage::offlineMessage()
 {
-
+    head="offline";
 }
+

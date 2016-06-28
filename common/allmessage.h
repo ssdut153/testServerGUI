@@ -39,14 +39,14 @@
 
 #include "message/function/p2pmessage.h"              //  2016-6-26
 
-//#include "message/loginout/onlinemessage.h"
-//#include "message/loginout/offlinemessage.h"
+#include "message/loginout/onlinemessage.h"           //  2016-6-28
+#include "message/loginout/offlinemessage.h"          //  2016-6-28
 
-//#include "message/function/forcelogoutmessage.h"
+#include "message/function/forcelogoutmessage.h"      //  2016-6-28
 //#include "message/function/forcereloginmessage.h"
 
-//#include "message/function/connecttestmessage.h"
-//#include "message/function/connectokmessage.h"
+#include "message/function/connecttestmessage.h"      //  2016-6-28
+#include "message/function/connectokmessage.h"        //  2016-6-28
 
 
 #endif // ALLMESSAGE_H

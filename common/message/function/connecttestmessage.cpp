@@ -17,5 +17,5 @@
 
 connectTestMessage::connectTestMessage()
 {
-
+    head="connectTest";
 }

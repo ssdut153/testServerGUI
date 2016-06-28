@@ -13,7 +13,7 @@
  *  作者:
  *  说明:
  ****************************************************************************************/
-#include "getFriendListMessage.h"
+#include "getfriendlistmessage.h"
 #include "../../cJSON.h"
 /**
  * @brief getFriendListMessage::getFriendListMessage

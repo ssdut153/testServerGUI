@@ -37,12 +37,3 @@ void Message::addHead(std::string h)
 {
     head=h;
 }
-/**
- * @brief Message::getHead
- * @return 头
- */
-std::string Message::getHead()
-{
-    return head;
-}
-

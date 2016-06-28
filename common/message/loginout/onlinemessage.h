@@ -5,8 +5,8 @@
  *  文件名称: onlinemessage.h
  *  简要描述:
  *
- *  创建日期:
- *  作者:
+ *  创建日期: 2016-6-28
+ *  作者: Yang Zhizhuang
  *  说明:
  *
  *  修改日期:
@@ -15,12 +15,13 @@
  ****************************************************************************************/
 #ifndef ONLINEMESSAGE_H
 #define ONLINEMESSAGE_H
-#include "../base/message.h"
+#include "../base/usernamemessage.h"
 
-class onlineMessage : public Message
+class onlineMessage : public usernameMessage
 {
 public:
     onlineMessage();
+    onlineMessage(std::string username);
 };
 
 #endif // ONLINEMESSAGE_H

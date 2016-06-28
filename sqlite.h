@@ -19,6 +19,8 @@
 #include <QtSql>
 #include <QString>
 #include <QtNetwork>
+#include <vector>
+#include "myclient.h"
 class Sqlite
 {
 public:
@@ -33,6 +35,9 @@ public:
     bool updatelogin(const char* username);
     bool updatelogout(const char* username);
     bool isonline(const char* username);
+    bool sendtofriends(const char* username,bool online,std::vector<MyClient>& clients,int size);
+    bool inital();
+    bool login(const char* username,QString ip);
 private:
     QSqlDatabase dbconn;
     QString regusersql="insert into users (username,password,salt,regdate,vip) values('?','?','?','?',?)";

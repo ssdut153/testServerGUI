@@ -5,8 +5,8 @@
  *  文件名称: onlinemessage.cpp
  *  简要描述:
  *
- *  创建日期:
- *  作者:
+ *  创建日期: 2016-6-28
+ *  作者: Yang Zhizhuang
  *  说明:
  *
  *  修改日期:
@@ -14,8 +14,21 @@
  *  说明:
  ****************************************************************************************/
 #include "onlinemessage.h"
-
+#include "../../cJSON.h"
+/**
+ * @brief onlineMessage::onlineMessage
+ * @param username 用户名
+ */
+onlineMessage::onlineMessage(std::string username)
+{
+    user=username;
+    head="online";
+}
+/**
+ * @brief onlineMessage::onlineMessage
+ */
 onlineMessage::onlineMessage()
 {
-
+    head="online";
 }
+
