@@ -18,7 +18,7 @@
 
 #include <QMainWindow>
 #include <QtWidgets/QTextEdit>
-#include "myclient.h"
+#include "./server/myclient.h"
 #include <QCloseEvent>
 namespace Ui {
 class MainWindow;

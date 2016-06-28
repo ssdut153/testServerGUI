@@ -22,9 +22,9 @@
 #include <QtGui>
 #include <QString>
 #include <QtSql>
-#include "sqlite.h"
-#include "helper.h"
-#include "myclient.h"
+#include "./server/sqlite.h"
+#include "./server/helper.h"
+#include "./server/myclient.h"
 #include <vector>
 #include "common/allmessage.h"
 #include <QDebug>

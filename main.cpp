@@ -15,7 +15,7 @@
  *
  *  Version: 1.0
  ****************************************************************************************/
-#include "mainwindow.h"
+#include "./window/mainwindow.h"
 #include <QApplication>
 #include <QDir>
 #include <QDebug>

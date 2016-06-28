@@ -15,10 +15,10 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp \
-    sqlite.cpp \
-    helper.cpp \
-    md5/md5.cpp \
+        window/mainwindow.cpp \
+    server/sqlite.cpp \
+    server/helper.cpp \
+    server/md5/md5.cpp \
     common/cJSON.c \
     common/message/base/message.cpp \
     common/user.cpp \
@@ -40,7 +40,7 @@ SOURCES += main.cpp\
     common/message/function/forcereloginmessage.cpp \
     common/message/function/connecttestmessage.cpp \
     common/message/function/connectokmessage.cpp \
-    myclient.cpp \
+    server/myclient.cpp \
     common/message/reg/regusermessage.cpp \
     common/message/reg/regfeedbackmessage.cpp \
     common/message/base/requestmessage.cpp \
@@ -50,10 +50,10 @@ SOURCES += main.cpp\
     common/message/base/upmessage.cpp \
     common/message/base/feedbackmessage.cpp
 
-HEADERS  += mainwindow.h \
-    sqlite.h \
-    helper.h \
-    md5/md5.h \
+HEADERS  += window/mainwindow.h \
+    server/sqlite.h \
+    server/helper.h \
+    server/md5/md5.h \
     common/cJSON.h \
     common/message/base/message.h \
     common/user.h \
@@ -75,7 +75,7 @@ HEADERS  += mainwindow.h \
     common/message/function/forcereloginmessage.h \
     common/message/function/connecttestmessage.h \
     common/message/function/connectokmessage.h \
-    myclient.h \
+    server/myclient.h \
     common/allmessage.h \
     common/message/reg/regusermessage.h \
     common/message/reg/regfeedbackmessage.h \
@@ -86,5 +86,5 @@ HEADERS  += mainwindow.h \
     common/message/base/upmessage.h \
     common/message/base/feedbackmessage.h
 
-FORMS    += mainwindow.ui
+FORMS    += window/mainwindow.ui
 #LIBS += "F:/QtCreate/testServerGUI/MySqlDLL.lib"
