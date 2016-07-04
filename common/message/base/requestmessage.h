@@ -21,8 +21,9 @@ class requestMessage : public Message
 {
 public:
     requestMessage();
-    std::string getJsonString();
-    bool loadfromJson(std::string textJson);
+    QByteArray getJsonString();
+    bool loadfromJson(QByteArray textJson);
+
 };
 
 #endif // REQUESTMESSAGE_H

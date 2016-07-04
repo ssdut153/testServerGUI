@@ -19,7 +19,6 @@ SOURCES += main.cpp\
     server/sqlite.cpp \
     server/helper.cpp \
     server/md5/md5.cpp \
-    common/cJSON.c \
     common/message/base/message.cpp \
     common/user.cpp \
     common/message/loginout/loginmessage.cpp \
@@ -55,7 +54,6 @@ HEADERS  += window/mainwindow.h \
     server/sqlite.h \
     server/helper.h \
     server/md5/md5.h \
-    common/cJSON.h \
     common/message/base/message.h \
     common/user.h \
     common/message/loginout/loginmessage.h \

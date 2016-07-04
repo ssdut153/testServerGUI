@@ -21,7 +21,7 @@ class offlineMessage : public usernameMessage
 {
 public:
     offlineMessage();
-    offlineMessage(std::string username);
+    offlineMessage(QString username);
 };
 
 #endif // OFFLINEMESSAGE_H

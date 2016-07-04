@@ -15,13 +15,14 @@
  ****************************************************************************************/
 #ifndef FORCELOGOUTMESSAGE_H
 #define FORCELOGOUTMESSAGE_H
+
 #include "../base/usernamemessage.h"
 
 class forceLogoutMessage : public usernameMessage
 {
 public:
     forceLogoutMessage();
-    forceLogoutMessage(std::string username);
+    forceLogoutMessage(QString username);
 };
 
 #endif // FORCELOGOUTMESSAGE_H

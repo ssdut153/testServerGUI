@@ -19,9 +19,9 @@ requestFriendMessage::requestFriendMessage()
 {
     head="requestFriend";
 }
-requestFriendMessage::requestFriendMessage(std::string fromUserName,std::string toUserName)
+requestFriendMessage::requestFriendMessage(QString fromUserName, QString toUserName)
 {
-    fromuser=fromUserName;
-    touser=toUserName;
-    head="requestFriend";
+    fromuser = fromUserName;
+    touser = toUserName;
+    head = "requestFriend";
 }

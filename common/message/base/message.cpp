@@ -19,21 +19,37 @@
  */
 Message::Message()
 {
-    head="default";
+    head = "default";
 }
 /**
  * @brief Message::Message
  * @param h 头
  */
-Message::Message(std::string h)
+Message::Message(QString h)
 {
-    head=h;
+    head = h;
+}
+/**
+ * @brief Message::~Message
+ */
+Message::~Message()
+{
+
 }
 /**
  * @brief Message::addHead
  * @param h 头
  */
-void Message::addHead(std::string h)
+void Message::addHead(QString h)
 {
-    head=h;
+    head = h;
 }
+/**
+ * @brief Message::getHead
+ * @return 头
+ */
+QString Message::getHead()
+{
+    return head;
+}
+

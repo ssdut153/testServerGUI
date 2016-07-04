@@ -14,12 +14,11 @@
  *  说明:
  ****************************************************************************************/
 #include "friendlistmessage.h"
-#include "../../cJSON.h"
 /**
  * @brief friendListMessage::friendListMessage
  * @param username 用户名
  */
-void friendListMessage::adduser(std::string username,int status)
+void friendListMessage::adduser(QString username, int status)
 {
     user.push_back(username);
     stat.push_back(status);
@@ -30,66 +29,98 @@ void friendListMessage::adduser(std::string username,int status)
  */
 friendListMessage::friendListMessage()
 {
-    head="friendList";
-    size=0;
+    head = "friendList";
+    size = 0;
 }
 /**
  * @brief friendListMessage::getJsonString
  * @return
  */
-std::string friendListMessage::getJsonString()
+QByteArray friendListMessage::getJsonString()
 {
-    cJSON *root, **dir;
-    char *out;
-    dir = (cJSON**)malloc(sizeof(cJSON*)*size);
-
-    //创建json数组型结构体
-    root = cJSON_CreateArray();
-    //cJSON_AddStringToObject(root,"head",head.c_str());
-    for (int i = 0; i < size; i++)
+    QJsonArray jsonArray;
+    for(int i = 0;i < size;i++)
     {
-        //创建对象至数组
-        cJSON_AddItemToArray(root, dir[i] = cJSON_CreateObject());
-        //为对象添加字符串键值对
-        cJSON_AddStringToObject(dir[i], "username", user[i].c_str());
-        cJSON_AddNumberToObject(dir[i],"status",stat[i]);
+        QJsonObject jsonObject;
+        jsonObject.insert("username", user[i]);
+        jsonObject.insert("status", stat[i]);
+        jsonArray.push_back(jsonObject);
+        QJsonDocument tempJsonDocument;
+        tempJsonDocument.setObject(jsonObject);
+        jsonArray.push_back(QString(tempJsonDocument.toJson(QJsonDocument::Compact)));
     }
-    //将json结构体转换为字符串
-    out = cJSON_PrintUnformatted(root);
-    std::string temp(out);
-    //释放内存
-    free(out);
-    cJSON_Delete(root);
-    return temp;
+    QJsonDocument jsonDocument;
+    jsonDocument.setArray(jsonArray);
+    return jsonDocument.toJson(QJsonDocument::Compact);
 }
 /**
  * @brief friendListMessage::loadfromJson
  * @param textJson
  * @return
  */
-bool friendListMessage::loadfromJson(std::string textJson)
+bool friendListMessage::loadfromJson(QByteArray textJson)
 {
-    cJSON * root = NULL, *item = NULL, *username, *status;
-    char *pr = NULL;
-    if ((root = cJSON_Parse(textJson.c_str())) == NULL)
-        return false;
-    int iSize = cJSON_GetArraySize(root);
-    size = iSize;
-    for (int iCnt = 0; iCnt < iSize; iCnt++)
+    QJsonParseError jsonParseError;
+    QJsonDocument jsonDocument = QJsonDocument::fromJson(textJson, &jsonParseError);
+    if(jsonParseError.error == QJsonParseError::NoError)
     {
-        cJSON * pSub = cJSON_GetArrayItem(root, iCnt);
-        pr = cJSON_Print(pSub);
-        item = cJSON_Parse(pr);
-        if (NULL == pSub)
-            continue;
-        //将键值item从json节点中取出
-        username = cJSON_GetObjectItem(item, "username");
-        status=cJSON_GetObjectItem(item,"status");
-        //加入到题库结构体数组
-        std::string temp(username->valuestring);
-        user.push_back(temp);
-        stat.push_back(status->valueint);
+        if(jsonDocument.isArray())
+        {
+            QJsonArray jsonArray = jsonDocument.array();
+            size = jsonArray.size();
+            for(int i = 0;i < size;i++)
+            {
+                QJsonValue jsonValue = jsonArray.at(i);
+                if(jsonValue.isObject())
+                {
+                    QJsonObject tempJsonObject =jsonValue.toObject();
+                    if(tempJsonObject.contains("username"))
+                    {
+                        QJsonValue jsonValue = tempJsonObject.take("username");
+                        if(jsonValue.isString())
+                        {
+                            user.push_back(jsonValue.toString());
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                    if(tempJsonObject.contains("status"))
+                    {
+                        QJsonValue jsonValue = tempJsonObject.take("status");
+                        if(jsonValue.isDouble())
+                        {
+                            stat.push_back(jsonValue.toInt());
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
+        else
+        {
+            return false;
+        }
     }
-    cJSON_Delete(root);
+    else
+    {
+        return false;
+    }
     return true;
 }

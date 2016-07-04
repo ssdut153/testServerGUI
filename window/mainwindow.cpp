@@ -47,7 +47,7 @@ void MainWindow::acceptConnection()
 {
     QString tem;
     QTextStream(&tem)<<"temp"<<clientSize;
-    clients.push_back(MyClient(tem.toStdString(),server->nextPendingConnection(),clientSize++));
+    clients.push_back(MyClient(tem,server->nextPendingConnection(),clientSize++));
 
     QString conne;
     QTextStream(&conne)<<"New connection: "<<clients[clientSize-1].client->peerAddress().toString()<<"\t"<<clients[clientSize-1].client->peerPort()<<" @"<<Helper::getDateTime();
@@ -76,16 +76,16 @@ void MainWindow::acceptConnection()
  * @param ind Index
  * @return QString log
  */
-QString login(std::string textJson,MyClient* socket,int ind)
+QString login(QByteArray textJson,MyClient* socket,int ind)
 {
     loginMessage loginmessage;
     QString res;
     loginmessage.loadfromJson(textJson);
 
-    if(sqlite->checkpassword(loginmessage.user.c_str(),loginmessage.pass.c_str()))
+    if(sqlite->checkpassword(loginmessage.user,loginmessage.pass))
     {
         //  强制已在线同一用户名登出,使用forcelogoutmessage，先用ifonline判断是否在线，在线则迭代socket
-        if(sqlite->isonline(loginmessage.user.c_str()))
+        if(sqlite->isonline(loginmessage.user))
         {
             QTcpSocket* tempSocket=NULL;
             for (int j=0;j<clientSize;j++)
@@ -97,23 +97,23 @@ QString login(std::string textJson,MyClient* socket,int ind)
                     break;
                 }
             }
-            forceLogoutMessage forcelogoutmessage(loginmessage.user.c_str());
-            tempSocket->write(forcelogoutmessage.getJsonString().c_str());
+            forceLogoutMessage forcelogoutmessage(loginmessage.user);
+            tempSocket->write(forcelogoutmessage.getJsonString());
         }
         loginFeedBackMessage feedback(loginmessage.user,"true");
         socket->username=loginmessage.user;
-        socket->client->write(feedback.getJsonString().c_str());
-        QTextStream(&res)<<loginmessage.user.c_str()<<" log in success @"<<Helper::getDateTime()<<" &scoketName:"<<QString::fromStdString(clients[ind].username);
-        sqlite->updatelogin(loginmessage.user.c_str());
-        sqlite->sendtofriends(loginmessage.user.c_str(),true,clients,clientSize);
-        sqlite->login(loginmessage.user.c_str(),socket->client->peerAddress().toString());
+        socket->client->write(feedback.getJsonString());
+        QTextStream(&res)<<loginmessage.user<<" log in success @"<<Helper::getDateTime()<<" &scoketName:"<<clients[ind].username;
+        sqlite->updatelogin(loginmessage.user);
+        sqlite->sendtofriends(loginmessage.user,true,clients,clientSize);
+        sqlite->login(loginmessage.user,socket->client->peerAddress().toString());
 
     }
     else
     {
         loginFeedBackMessage feedback(loginmessage.user,"false");
-        socket->client->write(feedback.getJsonString().c_str());
-        QTextStream(&res)<<loginmessage.user.c_str()<<" log in fail @"<<Helper::getDateTime();
+        socket->client->write(feedback.getJsonString());
+        QTextStream(&res)<<loginmessage.user<<" log in fail @"<<Helper::getDateTime();
     }
     return res;
 }
@@ -124,23 +124,23 @@ QString login(std::string textJson,MyClient* socket,int ind)
  * @param ind Index
  * @return  QString log
  */
-QString regUser(std::string textJson,MyClient* socket)
+QString regUser(QByteArray textJson,MyClient* socket)
 {
     regUserMessage regusermessage;
     QString res;
     regusermessage.loadfromJson(textJson);
 
-    if(sqlite->reguser(regusermessage.user.c_str(),regusermessage.pass.c_str(),"0"))
+    if(sqlite->reguser(regusermessage.user,regusermessage.pass,"0"))
     {
         regFeedBackMessage feedback(regusermessage.user, "true");
-        socket->client->write(feedback.getJsonString().c_str());
-        QTextStream(&res)<<regusermessage.user.c_str()<<" reg success @"<<Helper::getDateTime();
+        socket->client->write(feedback.getJsonString());
+        QTextStream(&res)<<regusermessage.user<<" reg success @"<<Helper::getDateTime();
     }
     else
     {
         regFeedBackMessage feedback(regusermessage.user,"false");
-        socket->client->write(feedback.getJsonString().c_str());
-        QTextStream(&res)<<regusermessage.user.c_str()<<" reg fail @"<<Helper::getDateTime();
+        socket->client->write(feedback.getJsonString());
+        QTextStream(&res)<<regusermessage.user<<" reg fail @"<<Helper::getDateTime();
     }
     return res;
 }
@@ -151,19 +151,19 @@ QString regUser(std::string textJson,MyClient* socket)
  * @param ind Index
  * @return  QString log
  */
-QString getFriendList(std::string textJson,MyClient* socket)
+QString getFriendList(QByteArray textJson,MyClient* socket)
 {
     getFriendListMessage getfriendlistmessage;
     QString res;
     getfriendlistmessage.loadfromJson(textJson);
 
-    if(sqlite->sendfriendlist(getfriendlistmessage.user.c_str(),socket->client))
+    if(sqlite->sendfriendlist(getfriendlistmessage.user,socket->client))
     {
-        QTextStream(&res)<<getfriendlistmessage.user.c_str()<<" send friend list success @"<<Helper::getDateTime();
+        QTextStream(&res)<<getfriendlistmessage.user<<" send friend list success @"<<Helper::getDateTime();
     }
     else
     {
-        QTextStream(&res)<<getfriendlistmessage.user.c_str()<<" send friend list fail @"<<Helper::getDateTime();
+        QTextStream(&res)<<getfriendlistmessage.user<<" send friend list fail @"<<Helper::getDateTime();
     }
     return res;
 }
@@ -171,10 +171,10 @@ QString getFriendList(std::string textJson,MyClient* socket)
  * @brief offline
  * @param username 用户名
  */
-bool offline(std::string username)
+bool offline(QString username)
 {
-    sqlite->sendtofriends(username.c_str(),false,clients,clientSize);
-    if(sqlite->updatelogout(username.c_str()))
+    sqlite->sendtofriends(username,false,clients,clientSize);
+    if(sqlite->updatelogout(username))
         return true;
     else
         return false;
@@ -196,17 +196,17 @@ void MainWindow::readClient(int ind)
             break;
         }
     }
-    QString str = tempSocket->readAll();
+    QByteArray str = tempSocket->readAll();
 
     //  解析消息类型
     if(!str.isEmpty())
     {
         //std::string head="login";
-        std::string head=Helper::getHeadfromJson(str.toStdString());
+        QString head=Helper::getHeadfromJson(str);
         if(head=="login")
         {
-            QString log=login(str.toStdString(),&clients[i],i);
-            if(Helper::log(log.toStdString().c_str(),logpath))
+            QString log=login(str,&clients[i],i);
+            if(Helper::log(log,logpath))
                 ui->textEdit->append(log);
             else
             {
@@ -218,14 +218,14 @@ void MainWindow::readClient(int ind)
         else if(head=="connectTest")
         {
             connectOkMessage connectokmessage;
-            clients[i].client->write(connectokmessage.getJsonString().c_str());
+            clients[i].client->write(connectokmessage.getJsonString());
         }
         else if(head=="logout")
         {
             logoutMessage logoutmessage;
-            logoutmessage.loadfromJson(str.toStdString());
+            logoutmessage.loadfromJson(str);
             QString log;
-            QTextStream(&log)<<QString::fromStdString(logoutmessage.user)<<" log out @"<<Helper::getDateTime();
+            QTextStream(&log)<<logoutmessage.user<<" log out @"<<Helper::getDateTime();
             offline(logoutmessage.user);
             //移除前要disconnect
             //disconnect(clients[clientSize-1].client, SIGNAL(readyRead()), signalMapper, 0);
@@ -246,34 +246,34 @@ void MainWindow::readClient(int ind)
         else if(head=="searchUser")
         {
             searchUserMessage searchusermessage;
-            searchusermessage.loadfromJson(str.toStdString());
-            if(sqlite->isexist(searchusermessage.user.c_str()))
+            searchusermessage.loadfromJson(str);
+            if(sqlite->isexist(searchusermessage.user))
             {
                 userInfoMessage userinfomessage(searchusermessage.user,"true");
-                clients[i].client->write(userinfomessage.getJsonString().c_str());
+                clients[i].client->write(userinfomessage.getJsonString());
             }
             else
             {
                 userInfoMessage userinfomessage(searchusermessage.user,"false");
-                clients[i].client->write(userinfomessage.getJsonString().c_str());
+                clients[i].client->write(userinfomessage.getJsonString());
             }
             return;
         }
         else if( head=="addFriend")
         {
             addFriendMessage addfriendmessage;
-            addfriendmessage.loadfromJson(str.toStdString());
+            addfriendmessage.loadfromJson(str);
             //已经为好友或不是本人
-            if(clients[i].username!=addfriendmessage.fromuser||sqlite->isfriend(addfriendmessage.fromuser.c_str(),addfriendmessage.touser.c_str()))
+            if(clients[i].username!=addfriendmessage.fromuser||sqlite->isfriend(addfriendmessage.fromuser,addfriendmessage.touser))
                 return;
-            if(sqlite->addfriend(addfriendmessage.fromuser.c_str(),addfriendmessage.touser.c_str()))
-                if(sqlite->isonline(addfriendmessage.touser.c_str()))
+            if(sqlite->addfriend(addfriendmessage.fromuser,addfriendmessage.touser))
+                if(sqlite->isonline(addfriendmessage.touser))
                 {
                     requestFriendMessage requestfriendmessage(addfriendmessage.fromuser,addfriendmessage.touser);
                     for(int i=0;i<clientSize;i++)
                         if(clients[i].username==addfriendmessage.touser)
                         {
-                            clients[i].client->write(requestfriendmessage.getJsonString().c_str());
+                            clients[i].client->write(requestfriendmessage.getJsonString());
                             return;
                         }
                 }
@@ -281,20 +281,20 @@ void MainWindow::readClient(int ind)
         else if(head=="ajFriend")
         {
             ajFriendMessage ajfriendmessage;
-            ajfriendmessage.loadfromJson(str.toStdString());
+            ajfriendmessage.loadfromJson(str);
             sqlite->ajfriend(ajfriendmessage);
             if(ajfriendmessage.acpt=="true")
             {
                 newFriendMessage newfriendmessage1(ajfriendmessage.fromuser);
-                clients[i].client->write(newfriendmessage1.getJsonString().c_str());
-                if(sqlite->isonline(ajfriendmessage.touser.c_str()))
+                clients[i].client->write(newfriendmessage1.getJsonString());
+                if(sqlite->isonline(ajfriendmessage.touser))
                 {
                     newFriendMessage newfriendmessage2(ajfriendmessage.touser);
                     for (int j=0;j<clientSize;j++)
                     {
                         if(clients[j].username==ajfriendmessage.fromuser)
                         {
-                            clients[j].client->write(newfriendmessage2.getJsonString().c_str());
+                            clients[j].client->write(newfriendmessage2.getJsonString());
                             break;
                         }
                     }
@@ -304,8 +304,8 @@ void MainWindow::readClient(int ind)
         }
         else if(head=="regUser")
         {
-            QString log=regUser(str.toStdString(),&clients[i]);
-            if(Helper::log(log.toStdString().c_str(),logpath))
+            QString log=regUser(str,&clients[i]);
+            if(Helper::log(log,logpath))
                 ui->textEdit->append(log);
             else
             {
@@ -316,8 +316,8 @@ void MainWindow::readClient(int ind)
         }
         else if(head=="getFriendList")
         {
-            QString log=getFriendList(str.toStdString(),&clients[i]);
-            if(Helper::log(log.toStdString().c_str(),logpath))
+            QString log=getFriendList(str,&clients[i]);
+            if(Helper::log(log,logpath))
                 ui->textEdit->append(log);
             else
             {
@@ -330,14 +330,14 @@ void MainWindow::readClient(int ind)
         {
             QString log;
             p2pMessage p2pmessage;
-            p2pmessage.loadfromJson(str.toStdString());
+            p2pmessage.loadfromJson(str);
             //是否是本人发送
             if(clients[i].username!=p2pmessage.FromUserName)
             {
                 feedBackMessage sendfailmessage(p2pmessage.ToUserName,"sendfail");
-                tempSocket->write(sendfailmessage.getJsonString().c_str());
-                QTextStream(&log)<<p2pmessage.FromUserName.c_str()<<" to "<<p2pmessage.ToUserName.c_str()<<" not same user @"<<p2pmessage.CreateTime.c_str();
-                if(Helper::log(log.toStdString().c_str(),logpath))
+                tempSocket->write(sendfailmessage.getJsonString());
+                QTextStream(&log)<<p2pmessage.FromUserName<<" to "<<p2pmessage.ToUserName<<" not same user @"<<p2pmessage.CreateTime;
+                if(Helper::log(log,logpath))
                     ui->textEdit->append(log);
                 else
                 {
@@ -347,12 +347,12 @@ void MainWindow::readClient(int ind)
                 return;
             }
             //是否为好友
-            if(!sqlite->isfriend(p2pmessage.ToUserName.c_str(),p2pmessage.FromUserName.c_str()))
+            if(!sqlite->isfriend(p2pmessage.ToUserName,p2pmessage.FromUserName))
             {
                 feedBackMessage sendfailmessage(p2pmessage.ToUserName,"sendfail");
-                tempSocket->write(sendfailmessage.getJsonString().c_str());
-                QTextStream(&log)<<p2pmessage.FromUserName.c_str()<<" to "<<p2pmessage.ToUserName.c_str()<<" not friend @"<<p2pmessage.CreateTime.c_str();
-                if(Helper::log(log.toStdString().c_str(),logpath))
+                tempSocket->write(sendfailmessage.getJsonString());
+                QTextStream(&log)<<p2pmessage.FromUserName<<" to "<<p2pmessage.ToUserName<<" not friend @"<<p2pmessage.CreateTime;
+                if(Helper::log(log,logpath))
                     ui->textEdit->append(log);
                 else
                 {
@@ -363,7 +363,7 @@ void MainWindow::readClient(int ind)
             }
             QTcpSocket* tempSocket2=NULL;
             //是否在线
-            bool flag=sqlite->isonline(p2pmessage.ToUserName.c_str());
+            bool flag=sqlite->isonline(p2pmessage.ToUserName);
             for (int j=0;j<clientSize;j++)
             {
                 if(clients[j].username==p2pmessage.ToUserName)
@@ -377,17 +377,17 @@ void MainWindow::readClient(int ind)
             {
                 ui->textEdit->append(flag?"true":"false");
                 feedBackMessage sendsuccessmessage(p2pmessage.ToUserName,"sendsuccess");
-                tempSocket2->write(str.toStdString().c_str());
-                tempSocket->write(sendsuccessmessage.getJsonString().c_str());
-                QTextStream(&log)<<p2pmessage.FromUserName.c_str()<<" to "<<p2pmessage.ToUserName.c_str()<<" send success @"<<p2pmessage.CreateTime.c_str();
+                tempSocket2->write(str);
+                tempSocket->write(sendsuccessmessage.getJsonString());
+                QTextStream(&log)<<p2pmessage.FromUserName<<" to "<<p2pmessage.ToUserName<<" send success @"<<p2pmessage.CreateTime;
             }
             else
             {
                 feedBackMessage sendfailmessage(p2pmessage.ToUserName,"sendfail");
-                tempSocket->write(sendfailmessage.getJsonString().c_str());
-                QTextStream(&log)<<p2pmessage.FromUserName.c_str()<<" to "<<p2pmessage.ToUserName.c_str()<<" send fail @"<<p2pmessage.CreateTime.c_str();
+                tempSocket->write(sendfailmessage.getJsonString());
+                QTextStream(&log)<<p2pmessage.FromUserName<<" to "<<p2pmessage.ToUserName<<" send fail @"<<p2pmessage.CreateTime;
             }
-            if(Helper::log(log.toStdString().c_str(),logpath))
+            if(Helper::log(log,logpath))
                 ui->textEdit->append(log);
             else
             {
@@ -401,8 +401,8 @@ void MainWindow::readClient(int ind)
             QString log;
             QTextStream(&log)<<str<<" @"<<Helper::getDateTime();
             tempSocket->write("I received your message:");
-            tempSocket->write(str.toStdString().c_str());
-            if(Helper::log(log.toStdString().c_str(),logpath))
+            tempSocket->write(str);
+            if(Helper::log(log,logpath))
                 ui->textEdit->append(log);
             else
             {
@@ -547,7 +547,7 @@ void MainWindow::on_pushButton_clicked()
     QTcpSocket* tempSocket=NULL;
     for (int i=0;i<clientSize;i++)
     {
-        if(clients[i].username==ui->textEdit_3->toPlainText().toStdString())
+        if(clients[i].username==ui->textEdit_3->toPlainText())
         {
             tempSocket=clients[i].client;
             break;
@@ -616,7 +616,7 @@ void MainWindow::on_pushButton_4_clicked()
             continue;
         QString output;
         QTextStream(&output)
-                <<QString::fromStdString(clients[i].username)
+                <<clients[i].username
                <<"\t"<<clients[i].client->peerAddress().toString()
               <<"\t"<<clients[i].client->peerPort();
         ui->textEdit->append(output);

@@ -21,12 +21,12 @@ class ajFriendMessage : public Message
 {
 public:
     ajFriendMessage();
-    ajFriendMessage(std::string fromUserName,std::string toUserName,std::string accept);
-    std::string getJsonString();
-    bool loadfromJson(std::string textJson);
-    std::string fromuser;
-    std::string touser;
-    std::string acpt;
+    ajFriendMessage(QString fromUserName, QString toUserName, QString accept);
+    QByteArray getJsonString();
+    bool loadfromJson(QByteArray textJson);
+    QString fromuser;
+    QString touser;
+    QString acpt;
 };
 
 #endif // AJFRIENDMESSAGE_H

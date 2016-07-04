@@ -15,13 +15,14 @@
  ****************************************************************************************/
 #ifndef ADDFRIENDMESSAGE_H
 #define ADDFRIENDMESSAGE_H
+
 #include "../base/uumessage.h"
 
 class addFriendMessage : public uuMessage
 {
 public:
     addFriendMessage();
-    addFriendMessage(std::string fromUserName,std::string toUserName);
+    addFriendMessage(QString fromUserName,QString toUserName);
 };
 
 #endif // ADDFRIENDMESSAGE_H

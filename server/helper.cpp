@@ -19,6 +19,9 @@
 #include "common/cJSON.h"
 #include <QTextStream>
 #include <QUuid>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonParseError>
 unsigned long seed=(unsigned long)time(0);
 QString Helper::newuuid()
 {
@@ -31,11 +34,11 @@ QString Helper::newuuid()
  * @param text 需要hash的文本
  * @return const char* MD5值
  */
-const char* Helper::hash(const char* text)
+QString Helper::hash(QString text)
 {
     MD5 md5;
-    md5.update(text);
-    return md5.toString().c_str();
+    md5.update(text.toStdString().c_str());
+    return QString(md5.toString().c_str());
 }
 /**
  * @brief Helper::tochararray
@@ -90,29 +93,41 @@ char* Helper::getsalt(int length)
  * @param textJson std::string Json字符串
  * @return std::string "head"内容
  */
-std::string Helper::getHeadfromJson(std::string textJson)
+QString Helper::getHeadfromJson(QByteArray textJson)
 {
-    if (textJson.find("\"head\":\"") >= textJson.length())
-        return "false";
-    cJSON *json , *json_head;
-    // 解析数据包
-    const char* text = textJson.c_str();
-    try
+    QJsonParseError jsonParseError;
+    QJsonDocument jsonDocument = QJsonDocument::fromJson(textJson, &jsonParseError);
+    if(jsonParseError.error == QJsonParseError::NoError)
     {
-        json = cJSON_Parse(text);
-        if (!json)
-            return "false";
+        if(jsonDocument.isObject())
+        {
+            QJsonObject jsonObject = jsonDocument.object();
+            if(jsonObject.contains("head"))
+            {
+                QJsonValue headValue = jsonObject.take("head");
+                if(headValue.isString())
+                {
+                    return headValue.toString();
+                }
+                else
+                {
+                    return "false";
+                }
+            }
+            else
+            {
+                return "false";
+            }
+        }
         else
         {
-            // 解析head
-            json_head = cJSON_GetObjectItem( json , "head");
-            std::string head=json_head->valuestring;
-            cJSON_Delete(json);
-            return head;
+            return "false";
         }
     }
-    catch(...)
-    {return "false";}
+    else
+    {
+        return "false";
+    }
 }
 /**
  * @brief Helper::getLogPath
@@ -132,7 +147,7 @@ void Helper::getLogPath(char* logPath)
  * @param logPath char* 保存的路径
  * @return logPath+yyyy_mm_dd.txt
  */
-const char* Helper::getLogFileName(char* logPath)
+QString Helper::getLogFileName(QString logPath)
 {
     QString temp;
     struct tm *local;
@@ -140,7 +155,7 @@ const char* Helper::getLogFileName(char* logPath)
     t=time(NULL);
     local=localtime(&t);
     QTextStream(&temp)<<logPath<<local->tm_year+1900<<"_"<<local->tm_mon+1<<"_"<<local->tm_mday<<".txt";
-    return temp.toStdString().c_str();
+    return temp;
 }
 
 /**
@@ -149,12 +164,12 @@ const char* Helper::getLogFileName(char* logPath)
  * @param logPath char* 保存到的文件绝对路径
  * @return 是否记录成功
  */
-bool Helper::log(const char* logText,char* logPath)
+bool Helper::log(QString logText, QString logPath)
 {
-    FILE* fp=fopen(Helper::getLogFileName(logPath),"at");
+    FILE* fp=fopen(Helper::getLogFileName(logPath).toStdString().c_str(),"at");
     if(fp==NULL)
         return false;
-    fputs(logText,fp);
+    fputs(logText.toStdString().c_str(),fp);
     fputs("\n",fp);
     fclose(fp);
     return true;

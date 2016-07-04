@@ -19,9 +19,9 @@ addFriendMessage::addFriendMessage()
 {
     head="addFriend";
 }
-addFriendMessage::addFriendMessage(std::string fromUserName,std::string toUserName)
+addFriendMessage::addFriendMessage(QString fromUserName, QString toUserName)
 {
-    fromuser=fromUserName;
-    touser=toUserName;
-    head="addFriend";
+    fromuser = fromUserName;
+    touser = toUserName;
+    head = "addFriend";
 }

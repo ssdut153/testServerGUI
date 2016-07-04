@@ -19,5 +19,5 @@
  */
 startSendListMessage::startSendListMessage()
 {
-    head="startSendList";
+    head = "startSendList";
 }

@@ -15,13 +15,14 @@
  ****************************************************************************************/
 #ifndef REGFEEDBACKMESSAGE_H
 #define REGFEEDBACKMESSAGE_H
+
 #include "../base/feedbackmessage.h"
 
 class regFeedBackMessage : public feedBackMessage
 {
 public:
     regFeedBackMessage();
-    regFeedBackMessage(std::string username,std::string status);
+    regFeedBackMessage(QString username, QString status);
 };
 
 #endif // REGFEEDBACKMESSAGE_H

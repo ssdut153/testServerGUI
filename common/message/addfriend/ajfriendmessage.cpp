@@ -14,68 +14,100 @@
  *  说明:
  ****************************************************************************************/
 #include "ajfriendmessage.h"
-#include "../../cJSON.h"
 
-ajFriendMessage::ajFriendMessage(std::string fromUserName,std::string toUserName,std::string accept)
+ajFriendMessage::ajFriendMessage(QString fromUserName, QString toUserName, QString accept)
 {
-    fromuser=fromUserName;
-    touser=toUserName;
-    acpt=accept;
-    head="ajFriend";
+    fromuser = fromUserName;
+    touser = toUserName;
+    acpt = accept;
+    head = "ajFriend";
 }
 /**
  * @brief ajFriendMessage::ajFriendMessage
  */
 ajFriendMessage::ajFriendMessage()
 {
-    head="ajFriend";
+    head = "ajFriend";
 }
 /**
  * @brief ajFriendMessage::getJsonString
  * @return  对应的单行Json字符串
  */
-std::string ajFriendMessage::getJsonString()
+QByteArray ajFriendMessage::getJsonString()
 {
-    // 创建JSON Object
-    cJSON *root = cJSON_CreateObject();
-    // 加入节点（键值对）
-    cJSON_AddStringToObject(root,"head",head.c_str());
-    cJSON_AddStringToObject(root,"fromusername",fromuser.c_str());
-    cJSON_AddStringToObject(root,"tousername",touser.c_str());
-    cJSON_AddStringToObject(root,"accept",acpt.c_str());
-    // 打印JSON数据包
-    char *out = cJSON_PrintUnformatted(root);
-    // 释放内存
-    cJSON_Delete(root);
-    std::string temp(out);
-    free(out);
-    return temp;
+    QJsonObject jsonObject;
+    jsonObject.insert("head", head);
+    jsonObject.insert("fromusername", fromuser);
+    jsonObject.insert("tousername", touser);
+    jsonObject.insert("accept", acpt);
+    QJsonDocument jsonDocument;
+    jsonDocument.setObject(jsonObject);
+    return jsonDocument.toJson(QJsonDocument::Compact);
 }
 /**
  * @brief ajFriendMessage::loadfromJson
  * @param textJson Json字符串
  * @return  bool 是否载入成功
  */
-bool ajFriendMessage::loadfromJson(std::string textJson)
+bool ajFriendMessage::loadfromJson(QByteArray textJson)
 {
-    cJSON *json , *json_fromuser,*json_touser,*json_accept;
-    // 解析数据包
-    const char* text = textJson.c_str();
-    json = cJSON_Parse(text);
-    if (!json)
-        return false;
+    QJsonParseError jsonParseError;
+    QJsonDocument jsonDocument = QJsonDocument::fromJson(textJson, &jsonParseError);
+    if(jsonParseError.error == QJsonParseError::NoError)
+    {
+        if(jsonDocument.isObject())
+        {
+            QJsonObject jsonObject = jsonDocument.object();
+            if(jsonObject.contains("fromusername"))
+            {
+                QJsonValue jsonValue = jsonObject.take("fromusername");
+                if(jsonValue.isString())
+                {
+                    fromuser = jsonValue.toString();
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                return false;
+            }
+            if(jsonObject.contains("tousername"))
+            {
+                QJsonValue jsonValue = jsonObject.take("tousername");
+                if(jsonValue.isString())
+                {
+                    touser = jsonValue.toString();
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                return false;
+            }
+            if(jsonObject.contains("accept"))
+            {
+                QJsonValue jsonValue = jsonObject.take("accept");
+                if(jsonValue.isString())
+                {
+                    acpt = jsonValue.toString();
+                }
+            }
+        }
+        else
+        {
+            return false;
+        }
+    }
     else
     {
-        // 解析username
-        json_fromuser = cJSON_GetObjectItem( json , "fromusername");
-        fromuser=json_fromuser->valuestring;
-        json_touser = cJSON_GetObjectItem( json , "tousername");
-        touser=json_touser->valuestring;
-        json_accept = cJSON_GetObjectItem( json , "accept");
-        acpt=json_accept->valuestring;
-        // 释放内存空间
-        cJSON_Delete(json);
-        return true;
+        return false;
     }
+    return true;
 }
 

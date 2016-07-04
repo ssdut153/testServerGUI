@@ -14,20 +14,19 @@
  *  说明:
  ****************************************************************************************/
 #include "getfriendlistmessage.h"
-#include "../../cJSON.h"
 /**
  * @brief getFriendListMessage::getFriendListMessage
  * @param username 用户名
  */
-getFriendListMessage::getFriendListMessage(std::string username)
+getFriendListMessage::getFriendListMessage(QString username)
 {
-    user=username;
-    head="getFriendList";
+    user = username;
+    head = "getFriendList";
 }
 /**
  * @brief getFriendListMessage::getFriendListMessage
  */
 getFriendListMessage::getFriendListMessage()
 {
-    head="getFriendList";
+    head = "getFriendList";
 }

@@ -27,20 +27,20 @@ class Sqlite
 public:
     Sqlite();
     ~Sqlite();
-    bool checkpassword(const char* username,const char* password);
-    bool reguser(const char* username,const char* password,const char* vip);//salt,regdate,sha-256
-    bool queryexec(const char* sqltext);
-    char* select1(char* selecttext);
-    bool sendfriendlist(const char* username,QTcpSocket* client);
-    bool isfriend(const char* username,const char* tocheckuser);
-    bool updatelogin(const char* username);
-    bool updatelogout(const char* username);
-    bool isonline(const char* username);
-    bool sendtofriends(const char* username,bool online,std::vector<MyClient>& clients,int size);
+    bool checkpassword(QString username, QString password);
+    bool reguser(QString username,QString password,QString vip);//salt,regdate,sha-256
+    bool queryexec(QString sqltext);
+    QString select1(QString selecttext);
+    bool sendfriendlist(QString username,QTcpSocket* client);
+    bool isfriend(QString username,QString tocheckuser);
+    bool updatelogin(QString username);
+    bool updatelogout(QString username);
+    bool isonline(QString username);
+    bool sendtofriends(QString username,bool online,std::vector<MyClient>& clients,int size);
     bool inital();
-    bool login(const char* username,QString ip);
-    bool isexist(const char* username);
-    bool addfriend(const char* fromusername,const char* tousername);
+    bool login(QString username,QString ip);
+    bool isexist(QString username);
+    bool addfriend(QString fromusername,QString tousername);
     bool ajfriend(ajFriendMessage& ajfriendmessage);
 private:
     QSqlDatabase dbconn;

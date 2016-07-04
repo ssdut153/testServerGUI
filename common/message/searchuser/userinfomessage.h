@@ -21,7 +21,7 @@ class userInfoMessage : public feedBackMessage
 {
 public:
     userInfoMessage();
-    userInfoMessage(std::string username,std::string status);
+    userInfoMessage(QString username, QString status);
 };
 
 #endif // USERINFOMESSAGE_H

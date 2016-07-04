@@ -21,7 +21,7 @@ class loginFeedBackMessage : public feedBackMessage
 {
 public:
     loginFeedBackMessage();
-    loginFeedBackMessage(std::string username,std::string status);
+    loginFeedBackMessage(QString username, QString status);
 };
 
 #endif // LOGINFEEDBACKMESSAGE_H

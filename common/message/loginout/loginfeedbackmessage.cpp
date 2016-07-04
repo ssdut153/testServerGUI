@@ -21,7 +21,7 @@
  * @param username 用户名
  * @param status 状态
  */
-loginFeedBackMessage::loginFeedBackMessage(std::string username,std::string status)
+loginFeedBackMessage::loginFeedBackMessage(QString username, QString status)
 {
     user=username;
     stat=status;

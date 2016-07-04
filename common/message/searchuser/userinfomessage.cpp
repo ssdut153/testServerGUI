@@ -20,7 +20,7 @@ userInfoMessage::userInfoMessage()
     head="userInfo";
 }
 
-userInfoMessage::userInfoMessage(std::string username,std::string status)
+userInfoMessage::userInfoMessage(QString username, QString status)
 {
     user=username;
     stat=status;

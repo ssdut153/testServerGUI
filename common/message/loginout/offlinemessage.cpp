@@ -19,7 +19,7 @@
  * @brief offlineMessage::offlineMessage
  * @param username 用户名
  */
-offlineMessage::offlineMessage(std::string username)
+offlineMessage::offlineMessage(QString username)
 {
     user=username;
     head="offline";

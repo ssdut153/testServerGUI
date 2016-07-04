@@ -5,8 +5,8 @@
  *  文件名称: p2pmessage.h
  *  简要描述:
  *
- *  创建日期: 2016-6-26
- *  作者: Yang Zhizhuang
+ *  创建日期:
+ *  作者:
  *  说明:
  *
  *  修改日期:
@@ -15,19 +15,20 @@
  ****************************************************************************************/
 #ifndef P2PMESSAGE_H
 #define P2PMESSAGE_H
+
 #include "../base/message.h"
 
 class p2pMessage : public Message
 {
 public:
     p2pMessage();
-    p2pMessage(std::string from,std::string to,std::string text);
-    std::string getJsonString();
-    bool loadfromJson(std::string textJson);
-    std::string FromUserName;
-    std::string ToUserName;
-    std::string CreateTime;
-    std::string Content;
+    p2pMessage(QString from, QString to, QString text);
+    QByteArray getJsonString();
+    bool loadfromJson(QByteArray textJson);
+    QString FromUserName;
+    QString ToUserName;
+    QString CreateTime;
+    QString Content;
 };
 
 #endif // P2PMESSAGE_H

@@ -20,7 +20,7 @@ searchUserMessage::searchUserMessage()
     head="searchUser";
 }
 
-searchUserMessage::searchUserMessage(std::string username)
+searchUserMessage::searchUserMessage(QString username)
 {
     user=username;
     head="searchUser";

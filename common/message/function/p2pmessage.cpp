@@ -5,8 +5,8 @@
  *  文件名称: p2pmessage.cpp
  *  简要描述:
  *
- *  创建日期: 2016-6-26
- *  作者: Yang Zhizhuang
+ *  创建日期:
+ *  作者:
  *  说明:
  *
  *  修改日期:
@@ -14,28 +14,19 @@
  *  说明:
  ****************************************************************************************/
 #include "p2pmessage.h"
-#include <time.h>
-#include <QString>
-#include <QTextStream>
-#include "../../cJSON.h"
+#include <QDateTime>
 /**
  * @brief p2pMessage::p2pMessage
  * @param username 用户名
  * @param status 状态
  */
-p2pMessage::p2pMessage(std::string from,std::string to,std::string text)
+p2pMessage::p2pMessage(QString from, QString to, QString text)
 {
-    FromUserName=from;
-    ToUserName=to;
-    Content=text;
-    head="p2p";
-    QString temp;
-    struct tm *local;
-    time_t t;
-    t=time(NULL);
-    local=localtime(&t);
-    QTextStream(&temp)<<local->tm_year+1900<<"-"<<local->tm_mon+1<<"-"<<local->tm_mday<<" "<<local->tm_hour<<":"<<local->tm_min<<":"<<local->tm_sec;
-    CreateTime=temp.toStdString();
+    FromUserName = from;
+    ToUserName = to;
+    Content = text;
+    head = "p2p";
+    CreateTime = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss");
 }
 /**
  * @brief p2pMessage::p2pMessage
@@ -46,53 +37,103 @@ p2pMessage::p2pMessage()
 }
 /**
  * @brief p2pMessage::getJsonString
- * @return std::string 对应的单行Json字符串
+ * @return QString 对应的单行Json字符串
  */
-std::string p2pMessage::getJsonString()
+QByteArray p2pMessage::getJsonString()
 {
-    // 创建JSON Object
-    cJSON *root = cJSON_CreateObject();
-    // 加入节点（键值对）
-    cJSON_AddStringToObject(root,"head",head.c_str());
-    cJSON_AddStringToObject(root,"fromusername",FromUserName.c_str());
-    cJSON_AddStringToObject(root,"tousername",ToUserName.c_str());
-    cJSON_AddStringToObject(root,"createtime",CreateTime.c_str());
-    cJSON_AddStringToObject(root,"content",Content.c_str());
-    // 打印JSON数据包
-    char *out = cJSON_PrintUnformatted(root);
-    // 释放内存
-    cJSON_Delete(root);
-    std::string temp(out);
-    free(out);
-    return temp;
+    QJsonObject jsonObject;
+    jsonObject.insert("head", head);
+    jsonObject.insert("fromusername", FromUserName);
+    jsonObject.insert("tousername", ToUserName);
+    jsonObject.insert("createtime", CreateTime);
+    jsonObject.insert("content", Content);
+    QJsonDocument jsonDocument;
+    jsonDocument.setObject(jsonObject);
+    return jsonDocument.toJson(QJsonDocument::Compact);
 }
 /**
  * @brief p2pMessage::loadfromJson
  * @param textJson Json字符串
  * @return bool 是否载入成功
  */
-bool p2pMessage::loadfromJson(std::string textJson)
+bool p2pMessage::loadfromJson(QByteArray textJson)
 {
-    cJSON *json , *json_from , *json_to,*json_time,*json_content;
-    // 解析数据包
-    const char* text = textJson.c_str();
-    json = cJSON_Parse(text);
-    if (!json)
-        return false;
+    QJsonParseError jsonParseError;
+    QJsonDocument jsonDocument = QJsonDocument::fromJson(textJson, &jsonParseError);
+    if(jsonParseError.error == jsonParseError.NoError)
+    {
+        if(jsonDocument.isObject())
+        {
+            QJsonObject jsonObject = jsonDocument.object();
+            if(jsonObject.contains("fromusername"))
+            {
+                QJsonValue jsonValue = jsonObject.take("fromusername");
+                if(jsonValue.isString())
+                {
+                    FromUserName = jsonValue.toString();
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                return false;
+            }
+            if(jsonObject.contains("tousername"))
+            {
+                QJsonValue jsonValue = jsonObject.take("tousername");
+                if(jsonValue.isString())
+                {
+                    ToUserName = jsonValue.toString();
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                return false;
+            }
+            if(jsonObject.contains("createtime"))
+            {
+                QJsonValue jsonValue = jsonObject.take("createtime");
+                if(jsonValue.isString())
+                {
+                    CreateTime = jsonValue.toString();
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            if(jsonObject.contains("content"))
+            {
+                QJsonValue jsonValue = jsonObject.take("content");
+                if(jsonValue.isString())
+                {
+                    Content = jsonValue.toString();
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                return false;
+            }
+        }
+        else
+        {
+            return false;
+        }
+    }
     else
     {
-        head="p2p";
-        json_from = cJSON_GetObjectItem( json , "fromusername");
-        FromUserName=json_from->valuestring;
-        json_to = cJSON_GetObjectItem( json , "tousername");
-        ToUserName=json_to->valuestring;
-        json_time = cJSON_GetObjectItem( json , "createtime");
-        CreateTime=json_time->valuestring;
-        json_content = cJSON_GetObjectItem( json , "content");
-        Content=json_content->valuestring;
-        // 释放内存空间
-        cJSON_Delete(json);
-        return true;
+        return false;
     }
-
+    return true;
 }

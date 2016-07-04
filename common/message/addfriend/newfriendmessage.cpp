@@ -19,9 +19,9 @@ newFriendMessage::newFriendMessage()
 {
     head="newFriend";
 }
-newFriendMessage::newFriendMessage(std::string username)
-{
-    user=username;
-    head="newFriend";
-}
 
+newFriendMessage::newFriendMessage(QString username)
+{
+    user = username;
+    head = "newFriend";
+}

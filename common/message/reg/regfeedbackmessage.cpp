@@ -14,13 +14,12 @@
  *  说明:
  ****************************************************************************************/
 #include "regfeedbackmessage.h"
-#include "../../cJSON.h"
 /**
  * @brief regFeedBackMessage::regFeedBackMessage
  * @param username 用户名
  * @param status 状态
  */
-regFeedBackMessage::regFeedBackMessage(std::string username,std::string status)
+regFeedBackMessage::regFeedBackMessage(QString username, QString status)
 {
     user=username;
     stat=status;

@@ -20,16 +20,16 @@
 class Helper
 {
 public:
-    static const char* hash(const char* text);
+    static QString hash(QString text);
     static const char* tochararray(QString qstr);
     static char randchar(int rule);
     static int randint(int lower,int higher);
     static char* getsalt(int length=8);
     static int lenofchararrau(const char* text);
-    static std::string getHeadfromJson(std::string textJson);
+    static QString getHeadfromJson(QByteArray textJson);
     static QString getDateTime();
-    static const char* getLogFileName(char* logPath);
-    static bool log(const char* logText,char* logPath);
+    static QString getLogFileName(QString logPath);
+    static bool log(QString logText,QString logPath);
     static void getLogPath(char* logPath);
     static QString newuuid();
 };

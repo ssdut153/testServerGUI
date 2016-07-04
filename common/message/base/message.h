@@ -15,18 +15,24 @@
  ****************************************************************************************/
 #ifndef MESSAGE_H
 #define MESSAGE_H
-#include <string>
+
+#include <QByteArray>
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonParseError>
 
 class Message
 {
 public:
     Message();
-    Message(std::string h);
-    virtual ~Message(){}
-    virtual std::string getJsonString()=0;
-    virtual bool loadfromJson(std::string textJson)=0;
-    void addHead(std::string h);
-    std::string head;
+    Message(QString h);
+    virtual ~Message();
+    virtual QByteArray getJsonString() = 0;
+    virtual bool loadfromJson(QByteArray textJson) = 0;
+    void addHead(QString h);
+    QString getHead();
+    QString head;
 };
 
 

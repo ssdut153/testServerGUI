@@ -14,22 +14,21 @@
  *  说明:
  ****************************************************************************************/
 #include "loginmessage.h"
-#include "../../cJSON.h"
 /**
  * @brief loginMessage::loginMessage
  * @param username 用户名
  * @param password 密码
  */
-loginMessage::loginMessage(std::string username,std::string password)
+loginMessage::loginMessage(QString username,QString password)
 {
-    user=username;
-    pass=password;
-    head="login";
+    user = username;
+    pass = password;
+    head = "login";
 }
 /**
  * @brief loginMessage::loginMessage
  */
 loginMessage::loginMessage()
 {
-    head="login";
+    head = "login";
 }

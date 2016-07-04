@@ -19,5 +19,5 @@
  */
 endSendListMessage::endSendListMessage()
 {
-    head="endSendList";
+    head = "endSendList";
 }

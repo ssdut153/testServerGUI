@@ -20,7 +20,7 @@
  * @param clientConnection QTcpSocket*
  * @param i index
  */
-MyClient::MyClient(std::string user,QTcpSocket *clientConnection,int i)
+MyClient::MyClient(QString user,QTcpSocket *clientConnection,int i)
 {
     username=user;
     client=clientConnection;

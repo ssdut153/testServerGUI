@@ -15,17 +15,18 @@
  ****************************************************************************************/
 #ifndef UUMESSAGE_H
 #define UUMESSAGE_H
+
 #include "message.h"
 
 class uuMessage : public Message
 {
 public:
     uuMessage();
-    uuMessage(std::string fromUserName,std::string toUserName);
-    std::string getJsonString();
-    bool loadfromJson(std::string textJson);
-    std::string fromuser;
-    std::string touser;
+    uuMessage(QString fromUserName,QString toUserName);
+    QByteArray getJsonString();
+    bool loadfromJson(QByteArray textJson);
+    QString fromuser;
+    QString touser;
 };
 
 #endif // UUMESSAGE_H

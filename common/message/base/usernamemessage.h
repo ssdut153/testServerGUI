@@ -15,16 +15,17 @@
  ****************************************************************************************/
 #ifndef USERNAMEMESSAGE_H
 #define USERNAMEMESSAGE_H
+
 #include "message.h"
 
 class usernameMessage : public Message
 {
 public:
     usernameMessage();
-    usernameMessage(std::string username);
-    std::string getJsonString();
-    bool loadfromJson(std::string textJson);
-    std::string user;
+    usernameMessage(QString username);
+    QByteArray getJsonString();
+    bool loadfromJson(QByteArray textJson);
+    QString user;
 };
 
 #endif // USERNAMEMESSAGE_H

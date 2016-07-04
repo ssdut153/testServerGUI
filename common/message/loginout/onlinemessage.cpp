@@ -14,12 +14,11 @@
  *  说明:
  ****************************************************************************************/
 #include "onlinemessage.h"
-#include "../../cJSON.h"
 /**
  * @brief onlineMessage::onlineMessage
  * @param username 用户名
  */
-onlineMessage::onlineMessage(std::string username)
+onlineMessage::onlineMessage(QString username)
 {
     user=username;
     head="online";

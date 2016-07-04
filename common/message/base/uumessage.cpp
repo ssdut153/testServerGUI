@@ -14,63 +14,89 @@
  *  说明:
  ****************************************************************************************/
 #include "uumessage.h"
-#include "../../cJSON.h"
 
-uuMessage::uuMessage(std::string fromUserName,std::string toUserName)
+uuMessage::uuMessage(QString fromUserName, QString toUserName)
 {
-    fromuser=fromUserName;
-    touser=toUserName;
-    head="defaultUu";
+    fromuser = fromUserName;
+    touser = toUserName;
+    head = "defaultUu";
 }
 /**
  * @brief uuMessage::uuMessage
  */
 uuMessage::uuMessage()
 {
-    head="defaultUu";
+    head = "defaultUu";
 }
 /**
  * @brief uuMessage::getJsonString
  * @return  对应的单行Json字符串
  */
-std::string uuMessage::getJsonString()
+QByteArray uuMessage::getJsonString()
 {
-    // 创建JSON Object
-    cJSON *root = cJSON_CreateObject();
-    // 加入节点（键值对）
-    cJSON_AddStringToObject(root,"head",head.c_str());
-    cJSON_AddStringToObject(root,"fromusername",fromuser.c_str());
-    cJSON_AddStringToObject(root,"tousername",touser.c_str());
-    // 打印JSON数据包
-    char *out = cJSON_PrintUnformatted(root);
-    // 释放内存
-    cJSON_Delete(root);
-    std::string temp(out);
-    free(out);
-    return temp;
+    QJsonObject jsonObject;
+    jsonObject.insert("head", head);
+    jsonObject.insert("fromusername", fromuser);
+    jsonObject.insert("tousername", touser);
+    QJsonDocument jsonDocument;
+    jsonDocument.setObject(jsonObject);
+    return jsonDocument.toJson(QJsonDocument::Compact);
 }
 /**
  * @brief uuMessage::loadfromJson
  * @param textJson Json字符串
  * @return  bool 是否载入成功
  */
-bool uuMessage::loadfromJson(std::string textJson)
+bool uuMessage::loadfromJson(QByteArray textJson)
 {
-    cJSON *json , *json_fromuser,*json_touser;
-    // 解析数据包
-    const char* text = textJson.c_str();
-    json = cJSON_Parse(text);
-    if (!json)
-        return false;
+    QJsonParseError jsonParseError;
+    QJsonDocument jsonDocument = QJsonDocument::fromJson(textJson, &jsonParseError);
+    if(jsonParseError.error == QJsonParseError::NoError)
+    {
+        if(jsonDocument.isObject())
+        {
+            QJsonObject jsonObject = jsonDocument.object();
+            if(jsonObject.contains("fromusername"))
+            {
+                QJsonValue jsonValue = jsonObject.take("fromusername");
+                if(jsonValue.isString())
+                {
+                    fromuser = jsonValue.toString();
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                return false;
+            }
+            if(jsonObject.contains("tousername"))
+            {
+                QJsonValue jsonValue = jsonObject.take("tousername");
+                if(jsonValue.isString())
+                {
+                    touser = jsonValue.toString();
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                return false;
+            }
+        }
+        else
+        {
+            return false;
+        }
+    }
     else
     {
-        // 解析username
-        json_fromuser = cJSON_GetObjectItem( json , "fromusername");
-        fromuser=json_fromuser->valuestring;
-        json_touser = cJSON_GetObjectItem( json , "tousername");
-        touser=json_touser->valuestring;
-        // 释放内存空间
-        cJSON_Delete(json);
-        return true;
+        return false;
     }
+    return true;
 }

@@ -14,20 +14,19 @@
  *  说明:
  ****************************************************************************************/
 #include "logoutmessage.h"
-#include "../../cJSON.h"
 /**
  * @brief logoutMessage::logoutMessage
  * @param username 用户名
  */
-logoutMessage::logoutMessage(std::string username)
+logoutMessage::logoutMessage(QString username)
 {
-    user=username;
-    head="logout";
+    user = username;
+    head = "logout";
 }
 /**
  * @brief logoutMessage::logoutMessage
  */
 logoutMessage::logoutMessage()
 {
-    head="logout";
+    head = "logout";
 }

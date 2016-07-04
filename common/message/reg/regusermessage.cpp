@@ -14,17 +14,16 @@
  *  说明:
  ****************************************************************************************/
 #include "regusermessage.h"
-#include "../../cJSON.h"
 /**
  * @brief regUserMessage::regUserMessage
  * @param username 用户名
  * @param password 密码
  */
-regUserMessage::regUserMessage(std::string username,std::string password)
+regUserMessage::regUserMessage(QString username, QString password)
 {
-    user=username;
-    pass=password;
-    head="regUser";
+    user = username;
+    pass = password;
+    head = "regUser";
 }
 /**
  * @brief regUserMessage::regUserMessage

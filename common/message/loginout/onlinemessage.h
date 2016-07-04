@@ -21,7 +21,7 @@ class onlineMessage : public usernameMessage
 {
 public:
     onlineMessage();
-    onlineMessage(std::string username);
+    onlineMessage(QString username);
 };
 
 #endif // ONLINEMESSAGE_H

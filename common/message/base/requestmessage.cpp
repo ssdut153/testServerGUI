@@ -14,11 +14,9 @@
  *  说明:
  ****************************************************************************************/
 #include "requestmessage.h"
-#include "../../cJSON.h"
+
 /**
  * @brief requestMessage::requestMessage
- * @param username 用户名
- * @param password 密码
  */
 requestMessage::requestMessage()
 {
@@ -28,40 +26,53 @@ requestMessage::requestMessage()
  * @brief requestMessage::getJsonString
  * @return  对应的单行Json字符串
  */
-std::string requestMessage::getJsonString()
+QByteArray requestMessage::getJsonString()
 {
-    // 创建JSON Object
-    cJSON *root = cJSON_CreateObject();
-    // 加入节点（键值对）
-    cJSON_AddStringToObject(root,"head",head.c_str());
-    // 打印JSON数据包
-    char *out = cJSON_PrintUnformatted(root);
-    // 释放内存
-    cJSON_Delete(root);
-    std::string temp(out);
-    free(out);
-    return temp;
+    QJsonObject jsonObject;
+    jsonObject.insert("head", head);
+    QJsonDocument jsonDocument;
+    jsonDocument.setObject(jsonObject);
+    return jsonDocument.toJson(QJsonDocument::Compact);
 }
 /**
  * @brief requestMessage::loadfromJson
  * @param textJson Json字符串
  * @return  bool 是否载入成功
  */
-bool requestMessage::loadfromJson(std::string textJson)
+bool requestMessage::loadfromJson(QByteArray textJson)
 {
-    cJSON *json , *json_head;
-    // 解析数据包
-    const char* text = textJson.c_str();
-    json = cJSON_Parse(text);
-    if (!json)
-        return false;
+    QJsonParseError jsonParseError;
+    QJsonDocument jsonDocument = QJsonDocument::fromJson(textJson, &jsonParseError);
+    if(jsonParseError.error == QJsonParseError::NoError)
+    {
+        if(jsonDocument.isObject())
+        {
+            QJsonObject jsonObject = jsonDocument.object();
+            if(jsonObject.contains("head"))
+            {
+                QJsonValue headValue = jsonObject.take("head");
+                if(headValue.isString())
+                {
+                    head = headValue.toString();
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                return false;
+            }
+        }
+        else
+        {
+            return false;
+        }
+    }
     else
     {
-        // 解析username
-        json_head = cJSON_GetObjectItem( json , "head");
-        head=json_head->valuestring;
-        // 释放内存空间
-        cJSON_Delete(json);
-        return true;
+        return false;
     }
+    return true;
 }

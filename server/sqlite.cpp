@@ -42,8 +42,8 @@ bool Sqlite::ajfriend(ajFriendMessage& ajfriendmessage)
     if(ajfriendmessage.acpt=="true")
     {
         QSqlQuery query;
-        QString u=QString::fromStdString(ajfriendmessage.fromuser);
-        QString t=QString::fromStdString(ajfriendmessage.touser);
+        QString u=ajfriendmessage.fromuser;
+        QString t=ajfriendmessage.touser;
         QString sqltext="update "+u+" set status=1 where username='"+t+"'";
         if(!query.exec(sqltext))
             return false;
@@ -56,8 +56,8 @@ bool Sqlite::ajfriend(ajFriendMessage& ajfriendmessage)
     else
     {
         QSqlQuery query;
-        QString u=QString::fromStdString(ajfriendmessage.fromuser);
-        QString t=QString::fromStdString(ajfriendmessage.touser);
+        QString u=ajfriendmessage.fromuser;
+        QString t=ajfriendmessage.touser;
         QString sqltext="delete from "+u+" where username='"+t+"'";
         if(!query.exec(sqltext))
             return false;
@@ -68,26 +68,22 @@ bool Sqlite::ajfriend(ajFriendMessage& ajfriendmessage)
     }
 }
 
-bool Sqlite::addfriend(const char* fromusername,const char* tousername)
+bool Sqlite::addfriend(QString fromusername, QString tousername)
 {
     QSqlQuery query;
-    QString u=fromusername;
-    QString t=tousername;
-    QString sqltext="insert into "+t+" (username,status) values('"+u+"',0)";
+    QString sqltext="insert into "+tousername+" (username,status) values('"+fromusername+"',0)";
     if(!query.exec(sqltext))
         return false;
-    QString sqltext2="insert into "+u+" (username,status) values('"+t+"',0)";
+    QString sqltext2="insert into "+fromusername+" (username,status) values('"+tousername+"',0)";
     if(!query.exec(sqltext2))
         return false;
     return true;
 }
 
-bool Sqlite::isfriend(const char* username,const char* tocheckuser)
+bool Sqlite::isfriend(QString username, QString tocheckuser)
 {
     QSqlQuery query;
-    QString u=username;
-    QString t=tocheckuser;
-    QString sqltext="select * from "+u+" where username='"+t+"'";
+    QString sqltext="select * from "+username+" where username='"+tocheckuser+"'";
     if(!query.exec(sqltext))
         return false;
     if(query.next())
@@ -101,7 +97,7 @@ bool Sqlite::isfriend(const char* username,const char* tocheckuser)
  * @param sqltext sql语句
  * @return bool
  */
-bool Sqlite::queryexec(const char* sqltext)
+bool Sqlite::queryexec(QString sqltext)
 {
     QSqlQuery query;
     if(!query.exec(sqltext))
@@ -109,32 +105,29 @@ bool Sqlite::queryexec(const char* sqltext)
     return true;
 }
 
-bool Sqlite::updatelogin(const char* username)
+bool Sqlite::updatelogin(QString username)
 {
     QSqlQuery query;
-    QString u=username;
-    QString sqltext="update users set logindate='"+Helper::getDateTime()+"' where username='"+u+"'";
+    QString sqltext="update users set logindate='"+Helper::getDateTime()+"' where username='"+username+"'";
     if(!query.exec(sqltext))
         return false;
-    QString sqltext2="update users set online=1 where username='"+u+"'";
+    QString sqltext2="update users set online=1 where username='"+username+"'";
     if(!query.exec(sqltext2))
         return false;
     return true;
 }
-bool Sqlite::updatelogout(const char* username)
+bool Sqlite::updatelogout(QString username)
 {
     QSqlQuery query;
-    QString u=username;
-    QString sqltext2="update users set online=0 where username='"+u+"'";
+    QString sqltext2="update users set online=0 where username='"+username+"'";
     if(!query.exec(sqltext2))
         return false;
     return true;
 }
-bool Sqlite::isonline(const char* username)
+bool Sqlite::isonline(QString username)
 {
     QSqlQuery query;
-    QString u=username;
-    QString sqltext="select online from users where username='"+u+"'";
+    QString sqltext="select online from users where username='"+username+"'";
     if(!query.exec(sqltext))
         return false;
     if(!query.next())
@@ -153,11 +146,10 @@ bool Sqlite::inital()
     return true;
 }
 
-bool Sqlite::sendtofriends(const char* username,bool online,std::vector<MyClient>& clients,int size)
+bool Sqlite::sendtofriends(QString username,bool online,std::vector<MyClient>& clients,int size)
 {
     QSqlQuery query;
-    QString u=username;
-    QString sqltext="select username from "+u+" where status=1";
+    QString sqltext="select username from "+username+" where status=1";
     if(!query.exec(sqltext))
         return false;
     //try{
@@ -165,12 +157,12 @@ bool Sqlite::sendtofriends(const char* username,bool online,std::vector<MyClient
     {
         QTcpSocket* tempSocket=NULL;
         QString ele0=query.value(0).toString();
-        if(isonline(ele0.toStdString().c_str()))
+        if(isonline(ele0))
         {
             bool flag=false;
             for(int i=0;i<size;i++)
             {
-                if(clients[i].username==ele0.toStdString())
+                if(clients[i].username==ele0)
                 {
                     tempSocket=clients[i].client;
                     flag=true;
@@ -182,12 +174,12 @@ bool Sqlite::sendtofriends(const char* username,bool online,std::vector<MyClient
                 if(online)
                 {
                     onlineMessage onlinemessage(username);
-                    tempSocket->write(onlinemessage.getJsonString().c_str());
+                    tempSocket->write(onlinemessage.getJsonString());
                 }
                 else
                 {
                     offlineMessage offlinemessage(username);
-                    tempSocket->write(offlinemessage.getJsonString().c_str());
+                    tempSocket->write(offlinemessage.getJsonString());
                 }
             }
             else
@@ -204,11 +196,10 @@ bool Sqlite::sendtofriends(const char* username,bool online,std::vector<MyClient
 
     return true;
 }
-bool Sqlite::isexist(const char* username)
+bool Sqlite::isexist(QString username)
 {
     QSqlQuery query;
-    QString u=username;
-    QString sqltext="select * from users where username='"+u+"'";
+    QString sqltext="select * from users where username='"+username+"'";
     if(!query.exec(sqltext))
         return false;
     if(!query.next())
@@ -222,23 +213,22 @@ bool Sqlite::isexist(const char* username)
  * @param client QTcpSocket*
  * @return bool
  */
-bool Sqlite::sendfriendlist(const char* username,QTcpSocket* client)
+bool Sqlite::sendfriendlist(QString username,QTcpSocket* client)
 {
     QSqlQuery query;
-    QString u=username;
-    QString sqltext="select username from "+u+" where status=1";
+    QString sqltext="select username from "+username+" where status=1";
     if(!query.exec(sqltext))
         return false;
     startSendListMessage startsendlistmessage;
-    client->write(startsendlistmessage.getJsonString().c_str());
+    client->write(startsendlistmessage.getJsonString());
     client->waitForBytesWritten();
     friendListMessage friendlistmessage;
     while(query.next())//query.next()指向查找到的第一条记录，然后每次后移一条记录
     {
         QString ele0=query.value(0).toString();//query.value(0)是id的值，将其转换为int型
-        friendlistmessage.adduser(ele0.toStdString(),isonline(ele0.toStdString().c_str())?1:0);
+        friendlistmessage.adduser(ele0,isonline(ele0)?1:0);
     }
-    client->write(friendlistmessage.getJsonString().c_str());
+    client->write(friendlistmessage.getJsonString());
     //client->waitForBytesWritten();
     //endSendListMessage endsendlistmessage;
     //client->write(endsendlistmessage.getJsonString().c_str());
@@ -250,11 +240,10 @@ bool Sqlite::sendfriendlist(const char* username,QTcpSocket* client)
  * @param password 密码
  * @return bool
  */
-bool Sqlite::checkpassword(const char *username,const char *password)
+bool Sqlite::checkpassword(QString username,QString password)
 {
     QSqlQuery query;
-    QString u=username;
-    QString sqltext="select password,salt from users where username='"+u+"'";
+    QString sqltext="select password,salt from users where username='"+username+"'";
     if(!query.exec(sqltext))
         return false;
     query.next();
@@ -266,11 +255,10 @@ bool Sqlite::checkpassword(const char *username,const char *password)
     else
         return false;
 }
-bool Sqlite::login(const char* username,QString ip)
+bool Sqlite::login(QString username,QString ip)
 {
     QSqlQuery query;
-    QString u=username;
-    QString sqltext="update users set ip='"+ip+"' where username='"+u+"'";
+    QString sqltext="update users set ip='"+ip+"' where username='"+username+"'";
     if(!query.exec(sqltext))
         return false;
     else
@@ -284,22 +272,21 @@ bool Sqlite::login(const char* username,QString ip)
  * @param vip 是否为vip(0,1)
  * @return bool
  */
-bool Sqlite::reguser(const char* username,const char* password,const char* vip)//salt,regdate,sha-256
+bool Sqlite::reguser(QString username, QString password,QString vip)//salt,regdate,sha-256
 {
     QSqlQuery query;
-    char* salt=Helper::getsalt();
-    char* tohash=(char*)malloc(sizeof(char)*(Helper::lenofchararrau(password)+8+1));
-    strcpy(tohash,password);
-    strcat(tohash,salt);
-    QString u=username;
+    QString salt=Helper::getsalt();
+//    char* tohash=(char*)malloc(sizeof(char)*(Helper::lenofchararrau(password)+8+1));
+    QString tohash =password + salt;
+//    strcpy(tohash,password);
+//    strcat(tohash,salt);
     QString p=Helper::hash(tohash);
-    QString s=salt;
     QString v=vip;
     QString d=Helper::getDateTime();
-    QString sqltext="insert into users (username,password,salt,regdate,vip,online) values('"+u+"','"+p+"','"+s+"','"+d+"',"+v+",0)";
+    QString sqltext="insert into users (username,password,salt,regdate,vip,online) values('"+username+"','"+p+"','"+salt+"','"+d+"',"+v+",0)";
     if(!query.exec(sqltext))
         return false;
-    QString sqltext2="create table "+u+" (uid integer PRIMARY KEY autoincrement,username varchar(10) UNIQUE,status int)";
+    QString sqltext2="create table "+username+" (uid integer PRIMARY KEY autoincrement,username varchar(10) UNIQUE,status int)";
     if(!query.exec(sqltext2))
         return false;
     return true;

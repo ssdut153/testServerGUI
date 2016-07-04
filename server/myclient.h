@@ -20,9 +20,9 @@
 class MyClient
 {
 public:
-    MyClient(std::string user,QTcpSocket *clientConnection,int i);
+    MyClient(QString user,QTcpSocket *clientConnection,int i);
     QTcpSocket* client;
-    std::string username;
+    QString username;
     int index;
 };
 

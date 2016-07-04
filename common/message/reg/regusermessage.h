@@ -15,13 +15,14 @@
  ****************************************************************************************/
 #ifndef REGUSERMESSAGE_H
 #define REGUSERMESSAGE_H
-#include "../base/upmessage.h"
+
+#include "common/message/base/upmessage.h"
 
 class regUserMessage : public upMessage
 {
 public:
     regUserMessage();
-    regUserMessage(std::string username,std::string password);
+    regUserMessage(QString username, QString password);
 };
 
 #endif // REGUSERMESSAGE_H
