@@ -285,14 +285,14 @@ void MainWindow::readClient(int ind)
             sqlite->ajfriend(ajfriendmessage);
             if(ajfriendmessage.acpt=="true")
             {
-                newFriendMessage newfriendmessage1(ajfriendmessage.fromuser);
+                newFriendMessage newfriendmessage1(ajfriendmessage.touser);
                 clients[i].client->write(newfriendmessage1.getJsonString());
                 if(sqlite->isonline(ajfriendmessage.touser))
                 {
-                    newFriendMessage newfriendmessage2(ajfriendmessage.touser);
+                    newFriendMessage newfriendmessage2(ajfriendmessage.fromuser);
                     for (int j=0;j<clientSize;j++)
                     {
-                        if(clients[j].username==ajfriendmessage.fromuser)
+                        if(clients[j].username==ajfriendmessage.touser)
                         {
                             clients[j].client->write(newfriendmessage2.getJsonString());
                             break;

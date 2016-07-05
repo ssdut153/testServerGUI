@@ -47,9 +47,9 @@ QByteArray friendListMessage::getJsonString()
         jsonObject.insert("username", user[i]);
         jsonObject.insert("status", stat[i]);
         jsonArray.push_back(jsonObject);
-        QJsonDocument tempJsonDocument;
-        tempJsonDocument.setObject(jsonObject);
-        jsonArray.push_back(QString(tempJsonDocument.toJson(QJsonDocument::Compact)));
+//        QJsonDocument tempJsonDocument;
+//        tempJsonDocument.setObject(jsonObject);
+//        jsonArray.push_back(QString(tempJsonDocument.toJson(QJsonDocument::Compact)));
     }
     jsonObject.insert("friendlist", jsonArray);
     QJsonDocument jsonDocument;
