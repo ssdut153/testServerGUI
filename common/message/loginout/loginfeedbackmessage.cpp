@@ -15,7 +15,6 @@
  ****************************************************************************************/
 
 #include "loginfeedbackmessage.h"
-#include "../../cJSON.h"
 /**
  * @brief loginFeedBackMessage::loginFeedBackMessage
  * @param username 用户名
@@ -34,5 +33,3 @@ loginFeedBackMessage::loginFeedBackMessage()
 {
     head="loginFeedBack";
 }
-
-

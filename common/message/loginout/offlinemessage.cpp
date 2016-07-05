@@ -14,7 +14,6 @@
  *  说明:
  ****************************************************************************************/
 #include "offlinemessage.h"
-#include "../../cJSON.h"
 /**
  * @brief offlineMessage::offlineMessage
  * @param username 用户名

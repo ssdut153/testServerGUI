@@ -25,9 +25,9 @@
 #include "message/reg/regfeedbackmessage.h"            //  2016-6-23
 
 #include "message/friendlist/getfriendlistmessage.h"   //  2016-6-24
-#include "message/friendlist/startsendlistmessage.h"   //  2016-6-24
+//#include "message/friendlist/startsendlistmessage.h"   //  2016-6-24
 #include "message/friendlist/friendlistmessage.h"      //  2016-6-24    修改于 2016-6-25
-#include "message/friendlist/endsendlistmessage.h"     //  2016-6-24
+//#include "message/friendlist/endsendlistmessage.h"     //  2016-6-24
 
 #include "message/searchuser/searchusermessage.h"      //  2016-6-28
 #include "message/searchuser/userinfomessage.h"        //  2016-6-28

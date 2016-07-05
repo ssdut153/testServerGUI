@@ -38,6 +38,8 @@ friendListMessage::friendListMessage()
  */
 QByteArray friendListMessage::getJsonString()
 {
+    QJsonObject jsonObject;
+    jsonObject.insert("head", head);
     QJsonArray jsonArray;
     for(int i = 0;i < size;i++)
     {
@@ -49,8 +51,9 @@ QByteArray friendListMessage::getJsonString()
         tempJsonDocument.setObject(jsonObject);
         jsonArray.push_back(QString(tempJsonDocument.toJson(QJsonDocument::Compact)));
     }
+    jsonObject.insert("friendlist", jsonArray);
     QJsonDocument jsonDocument;
-    jsonDocument.setArray(jsonArray);
+    jsonDocument.setObject(jsonObject);
     return jsonDocument.toJson(QJsonDocument::Compact);
 }
 /**
@@ -64,53 +67,69 @@ bool friendListMessage::loadfromJson(QByteArray textJson)
     QJsonDocument jsonDocument = QJsonDocument::fromJson(textJson, &jsonParseError);
     if(jsonParseError.error == QJsonParseError::NoError)
     {
-        if(jsonDocument.isArray())
+        if(jsonDocument.isObject())
         {
-            QJsonArray jsonArray = jsonDocument.array();
-            size = jsonArray.size();
-            for(int i = 0;i < size;i++)
+            QJsonObject jsonObject = jsonDocument.object();
+            if(jsonObject.contains("friendlist"))
             {
-                QJsonValue jsonValue = jsonArray.at(i);
-                if(jsonValue.isObject())
+                QJsonValue friendListValue = jsonObject.take("friendlist");
+                if(friendListValue.isArray())
                 {
-                    QJsonObject tempJsonObject =jsonValue.toObject();
-                    if(tempJsonObject.contains("username"))
+                    QJsonArray jsonArray = friendListValue.toArray();
+                    size = jsonArray.size();
+                    for(int i = 0;i < size;i++)
                     {
-                        QJsonValue jsonValue = tempJsonObject.take("username");
-                        if(jsonValue.isString())
+                        QJsonValue jsonValue = jsonArray.at(i);
+                        if(jsonValue.isObject())
                         {
-                            user.push_back(jsonValue.toString());
+                            QJsonObject tempJsonObject =jsonValue.toObject();
+                            if(tempJsonObject.contains("username"))
+                            {
+                                QJsonValue jsonValue = tempJsonObject.take("username");
+                                if(jsonValue.isString())
+                                {
+                                    user.push_back(jsonValue.toString());
+                                }
+                                else
+                                {
+                                    return false;
+                                }
+                            }
+                            else
+                            {
+                                return false;
+                            }
+                            if(tempJsonObject.contains("status"))
+                            {
+                                QJsonValue jsonValue = tempJsonObject.take("status");
+                                if(jsonValue.isDouble())
+                                {
+                                    stat.push_back(jsonValue.toInt());
+                                }
+                                else
+                                {
+                                    return false;
+                                }
+                            }
+                            else
+                            {
+                                return false;
+                            }
                         }
                         else
                         {
                             return false;
                         }
-                    }
-                    else
-                    {
-                        return false;
-                    }
-                    if(tempJsonObject.contains("status"))
-                    {
-                        QJsonValue jsonValue = tempJsonObject.take("status");
-                        if(jsonValue.isDouble())
-                        {
-                            stat.push_back(jsonValue.toInt());
-                        }
-                        else
-                        {
-                            return false;
-                        }
-                    }
-                    else
-                    {
-                        return false;
                     }
                 }
                 else
                 {
                     return false;
                 }
+            }
+            else
+            {
+                return false;
             }
         }
         else

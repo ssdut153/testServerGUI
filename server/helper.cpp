@@ -16,7 +16,6 @@
 #include "helper.h"
 #include "md5/md5.h"
 #include <time.h>
-#include "common/cJSON.h"
 #include <QTextStream>
 #include <QUuid>
 #include <QJsonDocument>

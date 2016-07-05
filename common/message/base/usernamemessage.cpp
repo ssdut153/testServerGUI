@@ -54,13 +54,20 @@ bool usernameMessage::loadfromJson(QByteArray textJson)
     QJsonDocument jsonDocument = QJsonDocument::fromJson(textJson, &jsonParseError);
     if(jsonParseError.error == QJsonParseError::NoError)
     {
-        QJsonObject jsonObject  = jsonDocument.object();
-        if(jsonObject.contains("username"))
+        if(jsonDocument.isObject())
         {
-            QJsonValue jsonValue = jsonObject.take("username");
-            if(jsonValue.isString())
+            QJsonObject jsonObject  = jsonDocument.object();
+            if(jsonObject.contains("username"))
             {
-                user = jsonValue.toString();
+                QJsonValue jsonValue = jsonObject.take("username");
+                if(jsonValue.isString())
+                {
+                    user = jsonValue.toString();
+                }
+                else
+                {
+                    return false;
+                }
             }
             else
             {

@@ -57,29 +57,36 @@ bool feedBackMessage::loadfromJson(QByteArray textJson)
     QJsonDocument jsonDocument = QJsonDocument::fromJson(textJson, &jsonParseError);
     if(jsonParseError.error == QJsonParseError::NoError)
     {
-        QJsonObject jsonObject = jsonDocument.object();
-        if(jsonObject.contains("username"))
+        if(jsonDocument.isObject())
         {
-            QJsonValue jsonValue = jsonObject.take("username");
-            if(jsonValue.isString())
+            QJsonObject jsonObject = jsonDocument.object();
+            if(jsonObject.contains("username"))
             {
-                user = jsonValue.toString();
+                QJsonValue jsonValue = jsonObject.take("username");
+                if(jsonValue.isString())
+                {
+                    user = jsonValue.toString();
+                }
+                else
+                {
+                    return false;
+                }
             }
             else
             {
                 return false;
             }
-        }
-        else
-        {
-            return false;
-        }
-        if(jsonObject.contains("status"))
-        {
-            QJsonValue jsonValue = jsonObject.take("status");
-            if(jsonValue.isString())
+            if(jsonObject.contains("status"))
             {
-                stat = jsonValue.toString();
+                QJsonValue jsonValue = jsonObject.take("status");
+                if(jsonValue.isString())
+                {
+                    stat = jsonValue.toString();
+                }
+                else
+                {
+                    return false;
+                }
             }
             else
             {

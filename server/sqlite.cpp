@@ -219,9 +219,6 @@ bool Sqlite::sendfriendlist(QString username,QTcpSocket* client)
     QString sqltext="select username from "+username+" where status=1";
     if(!query.exec(sqltext))
         return false;
-    startSendListMessage startsendlistmessage;
-    client->write(startsendlistmessage.getJsonString());
-    client->waitForBytesWritten();
     friendListMessage friendlistmessage;
     while(query.next())//query.next()指向查找到的第一条记录，然后每次后移一条记录
     {

@@ -43,8 +43,6 @@ SOURCES += main.cpp\
     common/message/reg/regusermessage.cpp \
     common/message/reg/regfeedbackmessage.cpp \
     common/message/base/requestmessage.cpp \
-    common/message/friendlist/endsendlistmessage.cpp \
-    common/message/friendlist/startsendlistmessage.cpp \
     common/message/base/usernamemessage.cpp \
     common/message/base/upmessage.cpp \
     common/message/base/feedbackmessage.cpp \
@@ -79,8 +77,6 @@ HEADERS  += window/mainwindow.h \
     common/message/reg/regusermessage.h \
     common/message/reg/regfeedbackmessage.h \
     common/message/base/requestmessage.h \
-    common/message/friendlist/endsendlistmessage.h \
-    common/message/friendlist/startsendlistmessage.h \
     common/message/base/usernamemessage.h \
     common/message/base/upmessage.h \
     common/message/base/feedbackmessage.h \
