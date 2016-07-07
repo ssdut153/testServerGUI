@@ -42,7 +42,8 @@
 
 #include "message/function/p2pmessage.h"                //  2016-6-26
 #include "message/function/imagemessage.h"              //  2016-7-8
-#include "message/function/listmessage.h"               //  2016-7-7
+#include "message/loginout/getlistmessage.h"            //  2016-7-8
+#include "message/loginout/listmessage.h"               //  2016-7-7
 
 #include "message/loginout/onlinemessage.h"             //  2016-6-28
 #include "message/loginout/offlinemessage.h"            //  2016-6-28

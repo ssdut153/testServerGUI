@@ -406,9 +406,9 @@ void MainWindow::readClient(int ind)
             }
             return;
         }
-        else if(head=="getListMessage")
+        else if(head=="getList")
         {
-            usernameMessage getlistmessage;
+            getListMessage getlistmessage;
             getlistmessage.loadfromJson(str);
             QString log=getlistmessage.user+" send offline message success";
             tempSocket->write(sqlite->getofflinemessage(getlistmessage.user));
