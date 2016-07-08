@@ -252,6 +252,41 @@ bool Sqlite::checkpassword(QString username,QString password)
     else
         return false;
 }
+bool Sqlite::logofflinemessage(QString fromusername,QString tousername,QString createtime,QString content)
+{
+    QSqlQuery query;
+    QString sqltext="insert into "+tousername+"_chat"+" (fromusername,tousername,createtime,content) values('"+fromusername+"','"+tousername+"','"+createtime+"','"+content+"')";
+    if(!query.exec(sqltext))
+        return false;
+    else
+        return true;
+}
+QByteArray Sqlite::getofflinemessage(QString username)
+{
+    QSqlQuery query;
+    QString sqltext="select fromusername,tousername,createtime,content from "+username+"_chat";
+    if(!query.exec(sqltext))
+        return "";
+    query.next();
+    listMessage listmessage(query.value(1).toString());
+    listmessage.addOfflineMessage(query.value(0).toString(),query.value(2).toString(),query.value(3).toString());
+    while(query.next())//query.next()指向查找到的第一条记录，然后每次后移一条记录
+    {
+        listmessage.addOfflineMessage(query.value(0).toString(),query.value(2).toString(),query.value(3).toString());
+    }
+    QString sqltext2="select username from "+username+" where status=0";
+    if(!query.exec(sqltext2))
+        return "";
+    while(query.next())//query.next()指向查找到的第一条记录，然后每次后移一条记录
+    {
+        listmessage.addFriendRequestMessage(query.value(0).toString());
+    }
+    QString sqltext3="delete from "+username+"_chat";
+    if(!query.exec(sqltext3))
+        return "";
+    return listmessage.getJsonString();
+}
+
 bool Sqlite::login(QString username,QString ip)
 {
     QSqlQuery query;
@@ -285,6 +320,9 @@ bool Sqlite::reguser(QString username, QString password,QString vip)//salt,regda
         return false;
     QString sqltext2="create table "+username+" (uid integer PRIMARY KEY autoincrement,username varchar(10) UNIQUE,status int)";
     if(!query.exec(sqltext2))
+        return false;
+    QString sqltext3="create table "+username+"_chat (uid integer PRIMARY KEY autoincrement,fromusername varchar(10),tousername varchar(10),createtime varchar(20),content text)";
+    if(!query.exec(sqltext3))
         return false;
     return true;
 }
