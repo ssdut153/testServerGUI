@@ -48,7 +48,8 @@ SOURCES += main.cpp\
     common/message/base/feedbackmessage.cpp \
     common/message/base/uumessage.cpp \
     common/message/function/listmessage.cpp \
-    common/message/function/imagemessage.cpp
+    common/message/function/imagemessage.cpp \
+    common/message/function/filemessage.cpp
 
 HEADERS  += window/mainwindow.h \
     server/sqlite.h \
@@ -84,7 +85,8 @@ HEADERS  += window/mainwindow.h \
     common/message/base/feedbackmessage.h \
     common/message/base/uumessage.h \
     common/message/function/listmessage.h \
-    common/message/function/imagemessage.h
+    common/message/function/imagemessage.h \
+    common/message/function/filemessage.h
 
 FORMS    += window/mainwindow.ui
 #LIBS += "F:/QtCreate/testServerGUI/MySqlDLL.lib"
