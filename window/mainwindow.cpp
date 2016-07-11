@@ -326,7 +326,7 @@ void MainWindow::readClient(int ind)
             }
             return;
         }
-        else if(head=="p2p")
+        else if(head=="p2p"||head=="image")
         {
             QString log;
             p2pMessage p2pmessage;
@@ -383,10 +383,35 @@ void MainWindow::readClient(int ind)
             }
             else
             {
-                feedBackMessage sendfailmessage(p2pmessage.ToUserName,"sendfail");
-                tempSocket->write(sendfailmessage.getJsonString());
-                QTextStream(&log)<<p2pmessage.FromUserName<<" to "<<p2pmessage.ToUserName<<" send fail @"<<p2pmessage.CreateTime;
+                if(sqlite->logofflinemessage(p2pmessage.FromUserName,p2pmessage.ToUserName,p2pmessage.CreateTime,p2pmessage.Content))
+                {
+                    feedBackMessage sendsuccessmessage(p2pmessage.ToUserName,"sendsuccess");
+                    tempSocket->write(sendsuccessmessage.getJsonString());
+                    QTextStream(&log)<<p2pmessage.FromUserName<<" to "<<p2pmessage.ToUserName<<" send success @"<<p2pmessage.CreateTime;
+                }
+                else
+                {
+                    feedBackMessage sendfailmessage(p2pmessage.ToUserName,"sendfail");
+                    tempSocket->write(sendfailmessage.getJsonString());
+                    QTextStream(&log)<<p2pmessage.FromUserName<<" to "<<p2pmessage.ToUserName<<" send fail @"<<p2pmessage.CreateTime;
+                }
+                //记录离线消息
             }
+            if(Helper::log(log,logpath))
+                ui->textEdit->append(log);
+            else
+            {
+                QTextStream(&log)<<" log failed";
+                ui->textEdit->append(log);
+            }
+            return;
+        }
+        else if(head=="getList")
+        {
+            getListMessage getlistmessage;
+            getlistmessage.loadfromJson(str);
+            QString log=getlistmessage.user+" send offline message success";
+            tempSocket->write(sqlite->getofflinemessage(getlistmessage.user));
             if(Helper::log(log,logpath))
                 ui->textEdit->append(log);
             else

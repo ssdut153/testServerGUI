@@ -20,6 +20,7 @@
 #include <QString>
 #include <QtNetwork>
 #include <vector>
+#include <QByteArray>
 #include "myclient.h"
 #include "../common/message/addfriend/ajfriendmessage.h"
 class Sqlite
@@ -42,6 +43,8 @@ public:
     bool isexist(QString username);
     bool addfriend(QString fromusername,QString tousername);
     bool ajfriend(ajFriendMessage& ajfriendmessage);
+    bool logofflinemessage(QString fromusername,QString tousername,QString createtime,QString content);
+    QByteArray getofflinemessage(QString username);
 private:
     QSqlDatabase dbconn;
     QString regusersql="insert into users (username,password,salt,regdate,vip) values('?','?','?','?',?)";
