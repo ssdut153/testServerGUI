@@ -41,7 +41,7 @@
 #include "message/addfriend/ajfriendmessage.h"          //  2016-6-28
 
 #include "message/function/p2pmessage.h"                //  2016-6-26
-#include "message/function/filemessage.h"               //  2016-7-2?
+#include "message/function/filemessage.h"               //  2016-7-?
 #include "message/function/imagemessage.h"              //  2016-7-8
 #include "message/loginout/getlistmessage.h"            //  2016-7-8
 #include "message/loginout/listmessage.h"               //  2016-7-7
