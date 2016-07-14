@@ -47,9 +47,9 @@ SOURCES += main.cpp\
     common/message/base/upmessage.cpp \
     common/message/base/feedbackmessage.cpp \
     common/message/base/uumessage.cpp \
-    common/message/function/listmessage.cpp \
+    common/message/loginout/listmessage.cpp \
     common/message/function/imagemessage.cpp \
-    common/message/function/filemessage.cpp
+    common/message/function/filemessage.cpp \
     common/message/loginout/getlistmessage.cpp
 
 HEADERS  += window/mainwindow.h \
@@ -85,7 +85,7 @@ HEADERS  += window/mainwindow.h \
     common/message/base/upmessage.h \
     common/message/base/feedbackmessage.h \
     common/message/base/uumessage.h \
-    common/message/function/listmessage.h \
+    common/message/loginout/listmessage.h \
     common/message/function/imagemessage.h \
     common/message/function/filemessage.h \
     common/message/loginout/getlistmessage.h

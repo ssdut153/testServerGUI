@@ -326,7 +326,7 @@ void MainWindow::readClient(int ind)
             }
             return;
         }
-        else if(head=="p2p"||head=="image")
+        else if(head=="p2p"||head=="image"||head=="file")
         {
             QString log;
             p2pMessage p2pmessage;
