@@ -85,4 +85,3 @@ bool usernameMessage::loadfromJson(QByteArray textJson)
     }
     return true;
 }
-

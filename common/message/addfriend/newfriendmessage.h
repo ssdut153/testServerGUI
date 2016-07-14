@@ -22,7 +22,10 @@ class newFriendMessage : public usernameMessage
 {
 public:
     newFriendMessage();
-    newFriendMessage(QString username);
+    newFriendMessage(QString username, int stat);
+    QByteArray getJsonString();
+    bool loadfromJson(QByteArray textJson);
+    int status;
 };
 
 #endif // NEWFRIENDMESSAGE_H
