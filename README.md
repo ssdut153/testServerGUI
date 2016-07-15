@@ -1,25 +1,34 @@
-#小学期项目的服务器端
-本项目为大连理工大学软件学院2015级本科生杨志庄带领的项目小组在2016年夏季小学期制作的聊天工具的服务端。
-#小组成员
-##队长
-	姓名：杨志庄
-	邮箱：yzz@mail.dlut.edu.cn
-##服务器端制作
-	杨志庄
-##客户端制作
-###逻辑功能
-	姓名：胡文强
-	邮箱：
-###UI及其优化
-	姓名：曹迈
-	邮箱：
-	
-	姓名：胡雨澄
-	邮箱：
-	
-	姓名：杨森
-	邮箱：
-	
-	姓名：郑照宇
-	邮箱：
-#其他
+# ChatMai Project Server
+The project of semester 1_3. 
+
+We decide to develop an online chatting software named ChatMai and these are the codes of server.
+## Team Members
+### Project Manager
+    English name: Jason Yang
+    Chinese name: 杨志庄
+    Japanaese name: Simura Yousuke
+    Occupation: Student(Bachelor) @ Software School of Dalian University of Technology
+    E-mail: yzz@mail.dlut.edu.cn
+### Server Codes
+    English name: Jason Yang
+    Chinese name: 杨志庄
+    Japanaese name: Simura Yousuke
+    Occupation: Student(Bachelor) @ Software School of Dalian University of Technology
+    E-mail: yzz@mail.dlut.edu.cn
+### Client Codes
+    Chinese name: 胡文强
+    Occupation: Student(Bachelor) @ Software School of Dalian University of Technology
+
+    Chinese name: 郑照宇
+    Occupation: Student(Bachelor) @ Software School of Dalian University of Technology
+### UI
+    Chinese name: 杨森
+    Occupation: Student(Bachelor) @ Software School of Dalian University of Technology
+    
+    Chinese name: 胡雨澄
+    Occupation: Student(Bachelor) @ Software School of Dalian University of Technology
+### Debug & Test
+    Chinese name: 曹迈
+    Occupation: Student(Bachelor) @ Software School of Dalian University of Technology
+## Client codes on github
+[https://github.com/ssdut153/project-semester-1_3](https://github.com/ssdut153/project-semester-1_3)
