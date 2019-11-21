@@ -14,8 +14,8 @@
  *  说明: 增加getLogFileName函数和log函数以及getLogPath函数
  ****************************************************************************************/
 #include "helper.h"
-#include "md5/md5.h"
 #include <time.h>
+#include <QCryptographicHash>
 #include <QTextStream>
 #include <QUuid>
 #include <QJsonDocument>
@@ -35,9 +35,7 @@ QString Helper::newuuid()
  */
 QString Helper::hash(QString text)
 {
-    MD5 md5;
-    md5.update(text.toStdString().c_str());
-    return QString(md5.toString().c_str());
+    return QString(QCryptographicHash::hash(text.toStdString().c_str(), QCryptographicHash::Md5).toHex());
 }
 /**
  * @brief Helper::tochararray

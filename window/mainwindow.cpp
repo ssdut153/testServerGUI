@@ -87,7 +87,7 @@ QString login(QByteArray textJson,MyClient* socket,int ind)
         //  强制已在线同一用户名登出,使用forcelogoutmessage，先用ifonline判断是否在线，在线则迭代socket
         if(sqlite->isonline(loginmessage.user))
         {
-            QTcpSocket* tempSocket=NULL;
+            QTcpSocket* tempSocket=nullptr;
             for (int j=0;j<clientSize;j++)
             {
                 if(clients[j].username==loginmessage.user)
@@ -186,7 +186,7 @@ bool offline(QString username)
  */
 void MainWindow::readClient(int ind)
 {
-    QTcpSocket* tempSocket=NULL;
+    QTcpSocket* tempSocket=nullptr;
     int i=0;
     for (;i<clientSize;i++)
     {
@@ -230,7 +230,7 @@ void MainWindow::readClient(int ind)
             //移除前要disconnect
             //disconnect(clients[clientSize-1].client, SIGNAL(readyRead()), signalMapper, 0);
             //clients[i].client->close();
-            //clients[i].client=NULL;
+            //clients[i].client=nullptr;
             clients[i].username="~logout";
             //clients.erase(clients.begin()+i);
             //clientSize--;
@@ -361,7 +361,7 @@ void MainWindow::readClient(int ind)
                 }
                 return;
             }
-            QTcpSocket* tempSocket2=NULL;
+            QTcpSocket* tempSocket2=nullptr;
             //是否在线
             bool flag=sqlite->isonline(p2pmessage.ToUserName);
             for (int j=0;j<clientSize;j++)
@@ -569,7 +569,7 @@ MainWindow::~MainWindow()
 void MainWindow::on_pushButton_clicked()
 {
 
-    QTcpSocket* tempSocket=NULL;
+    QTcpSocket* tempSocket=nullptr;
     for (int i=0;i<clientSize;i++)
     {
         if(clients[i].username==ui->textEdit_3->toPlainText())
@@ -578,6 +578,11 @@ void MainWindow::on_pushButton_clicked()
             break;
         }
     }
+
+    if (tempSocket == nullptr) {
+        return;
+    }
+
     std::string str = ui->textEdit_2->toPlainText().toStdString();
     const char* ch = str.c_str();
     tempSocket->write(ch);

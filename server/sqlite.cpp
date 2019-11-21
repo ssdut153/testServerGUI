@@ -155,7 +155,7 @@ bool Sqlite::sendtofriends(QString username,bool online,std::vector<MyClient>& c
     //try{
     while(query.next())//query.next()指向查找到的第一条记录，然后每次后移一条记录
     {
-        QTcpSocket* tempSocket=NULL;
+        QTcpSocket* tempSocket=nullptr;
         QString ele0=query.value(0).toString();
         if(isonline(ele0))
         {
@@ -247,7 +247,8 @@ bool Sqlite::checkpassword(QString username,QString password)
     QString pass=query.value(0).toString();
     QString salt=query.value(1).toString();
     QString tohash=password+salt;
-    if(pass==Helper::hash(Helper::tochararray(tohash)))
+    QString res = Helper::hash(tohash);
+    if(pass==res)
         return true;
     else
         return false;
