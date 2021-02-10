@@ -446,7 +446,7 @@ void MainWindow::readClient(int ind)
 //{"head":"p2p","fromusername":"testuser1","tousername":"testuser2","createtime":"2016-6-26 20:9:35","content":"hello"}
 //{"head":"addFriend","fromusername":"testuser1","tousername":"testuser2"}
 
-//create table users(uid integer primary key autoincrement,username varchar(20) UNIQUE,salt varchar(10),password varchar(70),regdate datetime,ip varchar(20),logindate datetime,vip int)
+//create table users(uid integer primary key autoincrement,username varchar(20) UNIQUE,salt varchar(10),password varchar(70),regdate datetime,ip varchar(20),logindate datetime,online int default 0,vip int)
 /**
  * @brief MainWindow::MainWindow
  * 窗口主程序
